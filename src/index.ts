@@ -1,13 +1,29 @@
-import * as Vec2D from 'vector2d'
 import { Vector } from 'vector2d';
+import { Physics } from './physics';
 import { Renderer } from './renderer';
 import { Star } from './star';
 
-const v = new Vec2D.Vector(2, 3);
 
-let renderer = new Renderer();
+class Application
+{
+    physics: Physics
+    renderer: Renderer;
 
-const star1 = new Star(new Vector(100, 100), 100);
-const star2 = new Star(new Vector(350, 350), 100);
+    constructor()
+    {
+        this.renderer = new Renderer();
+        this.physics = new Physics(this.renderer.width, this.renderer.height);
+        this.mainLoop();
+    }
 
-renderer.render([star1, star2]);
+    private mainLoop()
+    {
+        requestAnimationFrame(() => this.mainLoop());
+        
+        this.physics.simulate();
+        this.renderer.render(this.physics.stars);
+        // this.renderer.renderDebugCircles(this.physics.stars);
+    }
+}
+
+new Application();

@@ -20,7 +20,7 @@ export class Renderer
     }
 
     private drawPixel(x: number, y: number, color: Color) {
-        var index = 4 * (this.width * x + y);
+        var index = 4 * (this.width * y + x);
 
         this.data[index + 0] = color.r;
         this.data[index + 1] = color.g;
@@ -30,30 +30,29 @@ export class Renderer
 
     public render(stars: Array<Star>): void
     {
-        stars[0].position.x = Math.random() * this.width;
-
-        requestAnimationFrame(() => this.render(stars));
         for (let x = 0; x < this.width; x++)
         {
-            for (let y = 0; y < this.width; y++)
+            for (let y = 0; y < this.height; y++)
             {
                 const position = new Vector(x, y);
                 const sum = stars
                     .map(star => 180 * star.radius / star.distance(position))
                     .reduce((acc, cur) => acc + cur, 0);
 
-                const redColor = Math.min(sum, 255);
+                let redColor = Math.min(sum, 255);
+                if (redColor < 220)
+                {
+                    redColor = 0;
+                }
                 this.drawPixel(x, y, {r : redColor, g: 0, b: 0, a: 255});
             }
         }
 
         this.context.putImageData(this.image, 0, 0);
 
-        // this.renderDebugCircles(stars);
-
     }
 
-    private renderDebugCircles(stars: Array<Star>)
+    public renderDebugCircles(stars: Array<Star>)
     {
         stars.forEach(star =>
             {
