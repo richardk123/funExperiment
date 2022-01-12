@@ -8,13 +8,14 @@ export class Physics
     width: number;
     height: number;
     starFactory: StarFactory;
+    edgeOffset: number;
 
     constructor(width: number, height: number)
     {
         this.width = width;
         this.height = height;
-
-        this.starFactory = new StarFactory(width, height);
+        this.edgeOffset = 200;
+        this.starFactory = new StarFactory(width, height, this.edgeOffset);
 
         const star1 = this.starFactory.createStarOnEdge();
         const star2 = this.starFactory.createStarOnEdge();
@@ -28,8 +29,8 @@ export class Physics
     {
         this.stars.forEach(star =>
         {
-            if (star.position.x > this.width + star.radius || star.position.x < 0 - star.radius || 
-                star.position.y < 0 - star.radius || star.position.y > this.height + star.radius)
+            if (star.position.x > this.width + this.edgeOffset || star.position.x < -this.edgeOffset || 
+                star.position.y < -this.edgeOffset || star.position.y > this.height + this.edgeOffset)
             {
                 this.starFactory.moveToEdgeAndSetSpeed(star);
             }

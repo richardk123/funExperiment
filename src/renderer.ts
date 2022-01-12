@@ -36,11 +36,11 @@ export class Renderer
             {
                 const position = new Vector(x, y);
                 const sum = stars
-                    .map(star => 180 * star.radius / star.distance(position))
+                    .map(star => 100 * star.radius / star.distance(position))
                     .reduce((acc, cur) => acc + cur, 0);
 
                 let redColor = Math.min(sum, 255);
-                if (redColor < 220)
+                if (redColor < 120)
                 {
                     redColor = 0;
                 }

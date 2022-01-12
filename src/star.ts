@@ -24,11 +24,13 @@ export class StarFactory
 
     canvasWidth: number;
     canvasHeight: number;
+    edgeOffset: number;
 
-    constructor(canvasWidth: number, canvasHeight: number)
+    constructor(canvasWidth: number, canvasHeight: number, edgeOffset: number)
     {
         this.canvasHeight = canvasHeight;
         this.canvasWidth = canvasWidth;
+        this.edgeOffset = edgeOffset;
     }
 
     public createStarOnEdge(): Star
@@ -42,25 +44,25 @@ export class StarFactory
     public moveToEdgeAndSetSpeed(star: Star)
     {
         const xFrozen = this.randomBool();
-        let position = new Vector(0, 0);;
+        let position = new Vector(0, 0);
 
         if (xFrozen)
         {
             const minOrMax = this.randomBool();
-            position.x = minOrMax ? 0 : this.canvasWidth;
+            position.x = minOrMax ? -this.edgeOffset : this.canvasWidth + this.edgeOffset;
             position.y = Math.trunc(Math.random() * this.canvasHeight);
         }
         else
         {
             const minOrMax = this.randomBool();
             position.x = Math.trunc(Math.random() * this.canvasWidth);
-            position.y = minOrMax ? 0 : this.canvasHeight;
+            position.y = minOrMax ? -this.edgeOffset : this.canvasHeight + this.edgeOffset;
         }
 
         const randomPosition = new Vector(this.canvasWidth * Math.random(), this.canvasHeight * Math.random());
         const speed = randomPosition.subtract(position).unit().mulS(5);
 
-        star.position = position.subtract(speed.clone().unit().multiplyByScalar(star.radius));
+        star.position = position;
         star.speed = speed;
     }
 
