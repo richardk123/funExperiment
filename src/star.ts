@@ -5,12 +5,14 @@ export class Star
     position: Vector;
     radius: number;
     speed: Vector;
+    mass: number;
 
-    constructor(position: Vector, radius: number, speed: Vector)
+    constructor(position: Vector, radius: number, speed: Vector, mass: number)
     {
         this.position = position;
         this.radius = radius;
         this.speed = speed;
+        this.mass = mass;
     }
 
     public distance(position: Vector): number
@@ -36,7 +38,7 @@ export class StarFactory
     public createStarOnEdge(): Star
     {
 
-        const star = new Star(new Vector(0, 0), 20, new Vector(0, 0));
+        const star = new Star(new Vector(0, 0), 20, new Vector(0, 0), 1);
         this.moveToEdgeAndSetSpeed(star);
         return star;
     }

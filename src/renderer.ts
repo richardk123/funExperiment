@@ -36,14 +36,14 @@ export class Renderer
             {
                 const position = new Vector(x, y);
                 const sum = stars
-                    .map(star => 100 * star.radius / star.distance(position))
+                    .map(star => (star.radius / (star.distance(position) * star.distance(position) / 4)) * 1200)
                     .reduce((acc, cur) => acc + cur, 0);
 
                 let redColor = Math.min(sum, 255);
-                if (redColor < 120)
-                {
-                    redColor = 0;
-                }
+                // if (redColor < 120)
+                // {
+                //     redColor = 0;
+                // }
                 this.drawPixel(x, y, {r : redColor, g: 0, b: 0, a: 255});
             }
         }
