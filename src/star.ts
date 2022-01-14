@@ -1,18 +1,22 @@
 import { Vector } from 'vector2d';
+import { Utils } from './utils';
 
 export class Star
 {
     position: Vector;
-    radius: number;
     speed: Vector;
     mass: number;
 
-    constructor(position: Vector, radius: number, speed: Vector, mass: number)
+    constructor(position: Vector, speed: Vector, mass: number)
     {
         this.position = position;
-        this.radius = radius;
         this.speed = speed;
         this.mass = mass;
+    }
+
+    public get radius()
+    {
+        return this.mass * 5;
     }
 
     public distance(position: Vector): number
@@ -38,38 +42,36 @@ export class StarFactory
     public createStarOnEdge(): Star
     {
 
-        const star = new Star(new Vector(0, 0), 20, new Vector(0, 0), 1);
+        const weight = Utils.randomFromInterval(0.5, 2);
+        const star = new Star(new Vector(0, 0), new Vector(0, 0), weight);
         this.moveToEdgeAndSetSpeed(star);
         return star;
     }
 
     public moveToEdgeAndSetSpeed(star: Star)
     {
-        const xFrozen = this.randomBool();
+        const xFrozen = Utils.randomBool();
         let position = new Vector(0, 0);
 
         if (xFrozen)
         {
-            const minOrMax = this.randomBool();
+            const minOrMax = Utils.randomBool();
             position.x = minOrMax ? -this.edgeOffset : this.canvasWidth + this.edgeOffset;
             position.y = Math.trunc(Math.random() * this.canvasHeight);
         }
         else
         {
-            const minOrMax = this.randomBool();
+            const minOrMax = Utils.randomBool();
             position.x = Math.trunc(Math.random() * this.canvasWidth);
             position.y = minOrMax ? -this.edgeOffset : this.canvasHeight + this.edgeOffset;
         }
 
         const randomPosition = new Vector(this.canvasWidth * Math.random(), this.canvasHeight * Math.random());
-        const speed = randomPosition.subtract(position).unit().mulS(5);
+
+        const speedMagnitude = Utils.randomFromInterval(1, 2);
+        const speed = randomPosition.subtract(position).unit().mulS(speedMagnitude);
 
         star.position = position;
         star.speed = speed;
-    }
-
-    private randomBool(): boolean
-    {
-        return Math.random() < 0.5;
     }
 }
