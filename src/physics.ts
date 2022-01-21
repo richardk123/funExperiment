@@ -9,7 +9,7 @@ export class Physics
     width: number;
     height: number;
     starFactory: StarFactory;
-    edgeOffset: number;
+    readonly edgeOffset = 0;
 
     readonly numberOfStars = 20;
     readonly gravitationalConstant = 1000;
@@ -21,7 +21,6 @@ export class Physics
     {
         this.width = width;
         this.height = height;
-        this.edgeOffset = 0;
         this.starFactory = new StarFactory(width, height, this.edgeOffset);
 
         this.stars = new Array<Star>();
@@ -102,12 +101,20 @@ export class Physics
     {
         this.stars.forEach(star =>
             {
+                // exit the edge
                 if (star.position.x > this.width + this.edgeOffset || star.position.x < -this.edgeOffset || 
                     star.position.y < -this.edgeOffset || star.position.y > this.height + this.edgeOffset)
                 {
-                    this.starFactory.moveToEdgeAndSetSpeed(star);
+                    star.position.x = this.width - star.position.x;
+                    star.position.y = this.height - star.position.y;
+                    // star.speed.multiplyByScalar(-1);
                 }
+                // friction
+                // star.speed.multiplyByScalar(0.999);
                 star.position.add(star.speed);
             });
+
+        const totalMomentum = this.stars.map(star => Math.abs(star.speed.magnitude() * star.mass)).reduce((acc, cur) => acc + cur, 0);
+        document.getElementById("totalMomentum").innerHTML = totalMomentum.toString();
     }
 }
