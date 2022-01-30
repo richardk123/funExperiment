@@ -59,7 +59,7 @@ export class RendererGpu implements Renderer
     }
 
     // Utility to complain loudly if we fail to find the uniform
-    private getUniformLocation(program, name, webgl: WebGLRenderingContext): WebGLUniformLocation {
+    getUniformLocation(program, name, webgl: WebGLRenderingContext): WebGLUniformLocation {
         var uniformLocation = webgl.getUniformLocation(program, name);
         if (uniformLocation === -1) {
             throw 'Can not find uniform ' + name + '.';
@@ -67,7 +67,7 @@ export class RendererGpu implements Renderer
         return uniformLocation;
     }
 
-    private getAttribLocation(program, name, webgl: WebGLRenderingContext) {
+    getAttribLocation(program, name, webgl: WebGLRenderingContext) {
         var attributeLocation = webgl.getAttribLocation(program, name);
         if (attributeLocation === -1) {
             throw 'Can not find attribute ' + name + '.';
@@ -76,7 +76,7 @@ export class RendererGpu implements Renderer
     }
 
 
-    private compileShader(shaderType: GLenum, shaderSource: string, webgl: WebGLRenderingContext): WebGLShader
+    compileShader(shaderType: GLenum, shaderSource: string, webgl: WebGLRenderingContext): WebGLShader
     {
         var shader = webgl.createShader(shaderType);
         webgl.shaderSource(shader, shaderSource);
@@ -93,17 +93,18 @@ export class RendererGpu implements Renderer
     {
         // To send the data to the GPU, we first need to
         // flatten our data into a single array.
-        var dataToSendToGPU = new Float32Array(3 * stars.length);
+        var dataToSendToGPU = new Float32Array(4 * stars.length);
 
         stars.forEach((star, index) =>
         {
-            var baseIndex = 3 * index;
+            var baseIndex = 4 * index;
             dataToSendToGPU[baseIndex + 0] = star.position.x;
             dataToSendToGPU[baseIndex + 1] = star.position.y;
             dataToSendToGPU[baseIndex + 2] = star.radius;
+            dataToSendToGPU[baseIndex + 3] = star.mass;
         });
 
-        this.webgl.uniform3fv(this.metaballsData, dataToSendToGPU);
+        this.webgl.uniform4fv(this.metaballsData, dataToSendToGPU);
         this.webgl.uniform1i(this.metaballsCount, stars.length);
 
         this.webgl.drawArrays(this.webgl.TRIANGLE_STRIP, 0, 4);

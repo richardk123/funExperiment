@@ -24,7 +24,6 @@ class Application
         this.frame++;
         requestAnimationFrame(() => this.mainLoop());
 
-        console.log(this.frame);
         if (this.frame % 2)
         {
             this.physics.simulate();
