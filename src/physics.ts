@@ -9,13 +9,12 @@ export class Physics
     width: number;
     height: number;
     starFactory: StarFactory;
-    readonly edgeOffset = 0;
+    readonly edgeOffset = 100;
 
-    readonly numberOfStars = 20;
+    readonly numberOfStars = 50;
     readonly gravitationalConstant = 1000;
     readonly massStealSpeed = 500;
     readonly massStealDistanceTreashold = 0;
-    readonly maxGravityAcceleration = 1;
 
     constructor(width: number, height: number)
     {
@@ -35,6 +34,17 @@ export class Physics
         this.stealMass();
         this.applyGravity();
         this.applyVelocity();
+        this.spawnStars();
+        this.splitStar();
+
+    }
+
+    private spawnStars()
+    {
+        if (this.stars.length < this.numberOfStars)
+        {
+            this.stars.push(this.starFactory.createStarOnEdge());
+        }
     }
 
     private applyGravity()
@@ -51,10 +61,6 @@ export class Physics
                 })
                 .reduce((acc, cur) => acc.add(cur), new Vector(0, 0));
 
-            if (accelerationVector.magnitude() > this.maxGravityAcceleration)
-            {
-                accelerationVector.unit().multiplyByScalar(this.maxGravityAcceleration);
-            }
             star.speed.add(accelerationVector);
         })
     }
@@ -69,10 +75,11 @@ export class Physics
                 {
                     const distance = otherStar.position.distance(star.position);
                     const radiusDistance = distance - star.radius - otherStar.radius;
-                   
-                    if (radiusDistance < this.massStealDistanceTreashold)
+
+                    let massToSteal = ((star.mass / otherStar.mass) / (distance * distance)) * this.massStealSpeed;
+
+                    if (radiusDistance < this.massStealDistanceTreashold && massToSteal)
                     {
-                        let massToSteal = ((star.mass / otherStar.mass) / (distance * distance)) * this.massStealSpeed;
 
                         if (massToSteal > otherStar.mass)
                         {
@@ -85,13 +92,13 @@ export class Physics
                         const starMomentum = star.speed.clone().multiplyByScalar(star.mass);
                         const stealedMassMomentum = otherStar.speed.clone().multiplyByScalar(massToSteal);
 
-                        const resultSpeed = starMomentum.add(stealedMassMomentum).divideByScalar(star.mass);
-                        star.speed.x = resultSpeed.x;
-                        star.speed.y = resultSpeed.y;
-
                         // conservate mass
                         otherStar.mass -= massToSteal;
                         star.mass += massToSteal;
+
+                        const resultSpeed = starMomentum.add(stealedMassMomentum).divideByScalar(star.mass);
+                        star.speed.x = resultSpeed.x;
+                        star.speed.y = resultSpeed.y;
                     }
                 })
         });
@@ -101,20 +108,50 @@ export class Physics
     {
         this.stars.forEach(star =>
             {
+                // add speed
+                star.position.add(star.speed);
+
                 // exit the edge
                 if (star.position.x > this.width + this.edgeOffset || star.position.x < -this.edgeOffset || 
                     star.position.y < -this.edgeOffset || star.position.y > this.height + this.edgeOffset)
                 {
-                    star.position.x = this.width - star.position.x;
-                    star.position.y = this.height - star.position.y;
-                    // star.speed.multiplyByScalar(-1);
+                    // star.position.x = this.width - star.position.x;
+                    // star.position.y = this.height - star.position.y;
+
+                    const index = this.stars.indexOf(star);
+                    this.stars.splice(index, 1);
                 }
-                // friction
-                // star.speed.multiplyByScalar(0.999);
-                star.position.add(star.speed);
             });
 
-        const totalMomentum = this.stars.map(star => Math.abs(star.speed.magnitude() * star.mass)).reduce((acc, cur) => acc + cur, 0);
-        document.getElementById("totalMomentum").innerHTML = totalMomentum.toString();
+        const totalMomentum = this.stars.map(star => star.speed.magnitude());
+        const val = Math.max(...totalMomentum);
+        document.getElementById("totalMomentum").innerHTML = val.toString();
+    }
+
+    private splitStar()
+    {
+        const numberOfStars = 5;
+        const explosionSpeed = 20.5;
+
+        this.stars.forEach(star =>
+        {
+            if (star.mass > 5)
+            {
+                const index = this.stars.indexOf(star);
+                this.stars.splice(index, 1);
+
+                for (let i = 0; i < numberOfStars; i++)
+                {
+                    const pos = new Vector(star.position.x, star.position.y);
+                    const speed = new Vector(star.speed.x, star.speed.y);
+                    const newStar = new Star(pos, speed, star.mass / numberOfStars);
+                    const exposionDirection = new Vector(1, 1).rotate(((Math.PI * 2) / numberOfStars) * i);
+                    newStar.speed.add(exposionDirection.clone().unit().mulS(explosionSpeed));
+                    newStar.position.add(exposionDirection.clone().unit().mulS(newStar.radius).mulS(3));
+                    this.stars.push(newStar);
+                }
+
+            }
+        });
     }
 }

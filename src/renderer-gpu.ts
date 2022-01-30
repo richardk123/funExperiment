@@ -7,7 +7,8 @@ import fragmentShaderFile from '!!raw-loader!./shader/fragment.glsl';
 export class RendererGpu implements Renderer
 {
 
-    metaballsHandle: WebGLUniformLocation;
+    metaballsData: WebGLUniformLocation;
+    metaballsCount: WebGLUniformLocation;
     webgl: WebGLRenderingContext;
     width: number;
     height: number;
@@ -48,7 +49,8 @@ export class RendererGpu implements Renderer
             0 // offset into each span of vertex data
         );
 
-        this.metaballsHandle = this.getUniformLocation(program, 'metaballs', webgl);
+        this.metaballsData = this.getUniformLocation(program, 'metaballs', webgl);
+        this.metaballsCount = this.getUniformLocation(program, 'metaballsCount', webgl);
         this.webgl = webgl;
 
 
@@ -101,7 +103,8 @@ export class RendererGpu implements Renderer
             dataToSendToGPU[baseIndex + 2] = star.radius;
         });
 
-        this.webgl.uniform3fv(this.metaballsHandle, dataToSendToGPU);
+        this.webgl.uniform3fv(this.metaballsData, dataToSendToGPU);
+        this.webgl.uniform1i(this.metaballsCount, stars.length);
 
         this.webgl.drawArrays(this.webgl.TRIANGLE_STRIP, 0, 4);
     }

@@ -42,8 +42,8 @@ export class StarFactory
     public createStarOnEdge(): Star
     {
 
-        const weight = Utils.randomFromInterval(0.5, 2);
-        const star = new Star(new Vector(0, 0), new Vector(0, 0), weight);
+        const mass = Utils.randomFromInterval(0.1, 1);
+        const star = new Star(new Vector(0, 0), new Vector(0, 0), mass);
         this.moveToEdgeAndSetSpeed(star);
         return star;
     }
@@ -68,7 +68,7 @@ export class StarFactory
 
         const randomPosition = new Vector(this.canvasWidth * Math.random(), this.canvasHeight * Math.random());
 
-        const speedMagnitude = Utils.randomFromInterval(1, 2);
+        const speedMagnitude = Utils.randomFromInterval(0.1, 0.5);
         const speed = randomPosition.subtract(position).unit().mulS(speedMagnitude);
 
         star.position = position;
