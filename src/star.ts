@@ -6,12 +6,14 @@ export class Star
     position: Vector;
     speed: Vector;
     mass: number;
+    explosionFrameThreshold: number;
 
     constructor(position: Vector, speed: Vector, mass: number)
     {
         this.position = position;
         this.speed = speed;
         this.mass = mass;
+        this.explosionFrameThreshold = Utils.randomFromInterval(5, 15);
     }
 
     public get radius()

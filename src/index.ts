@@ -10,6 +10,7 @@ class Application
 {
     physics: Physics;
     renderer: Renderer;
+    frame = 0;
 
     constructor()
     {
@@ -20,9 +21,15 @@ class Application
 
     private mainLoop()
     {
+        this.frame++;
         requestAnimationFrame(() => this.mainLoop());
-        
-        this.physics.simulate();
+
+        console.log(this.frame);
+        if (this.frame % 2)
+        {
+            this.physics.simulate();
+        }
+
         this.renderer.render(this.physics.stars);
         // this.renderer.renderDebugCircles(this.physics.stars);
     }

@@ -11,7 +11,7 @@ export class Physics
     starFactory: StarFactory;
     readonly edgeOffset = 100;
 
-    readonly numberOfStars = 50;
+    readonly numberOfStars = 80;
     readonly gravitationalConstant = 1000;
     readonly massStealSpeed = 500;
     readonly massStealDistanceTreashold = 0;
@@ -123,31 +123,31 @@ export class Physics
                 }
             });
 
-        const totalMomentum = this.stars.map(star => star.speed.magnitude());
+        const totalMomentum = this.stars.map(star => star.mass);
         const val = Math.max(...totalMomentum);
         document.getElementById("totalMomentum").innerHTML = val.toString();
     }
 
     private splitStar()
     {
-        const numberOfStars = 5;
-        const explosionSpeed = 20.5;
-
         this.stars.forEach(star =>
         {
-            if (star.mass > 5)
+            if (star.mass > star.explosionFrameThreshold)
             {
                 const index = this.stars.indexOf(star);
                 this.stars.splice(index, 1);
+
+                const numberOfStars = Math.trunc(star.mass);
+                const explosionSpeed = 4 * star.mass;
 
                 for (let i = 0; i < numberOfStars; i++)
                 {
                     const pos = new Vector(star.position.x, star.position.y);
                     const speed = new Vector(star.speed.x, star.speed.y);
                     const newStar = new Star(pos, speed, star.mass / numberOfStars);
-                    const exposionDirection = new Vector(1, 1).rotate(((Math.PI * 2) / numberOfStars) * i);
-                    newStar.speed.add(exposionDirection.clone().unit().mulS(explosionSpeed));
-                    newStar.position.add(exposionDirection.clone().unit().mulS(newStar.radius).mulS(3));
+                    const explosionDirection = new Vector(1, 1).rotate(((Math.PI * 2) / numberOfStars) * i);
+                    newStar.speed.add(explosionDirection.clone().unit().mulS(explosionSpeed));
+                    newStar.position.add(explosionDirection.clone().unit().mulS(star.radius));
                     this.stars.push(newStar);
                 }
 
