@@ -1,17 +1,19 @@
 import { Vector } from 'vector2d';
 import { Physics } from './physics';
-import { Renderer } from './renderer';
+import { RendererCpu } from './renderer-cpu';
 import { Star } from './star';
+import {Renderer} from "./renderer";
+import {RendererGpu} from "./renderer-gpu";
 
 
 class Application
 {
-    physics: Physics
+    physics: Physics;
     renderer: Renderer;
 
     constructor()
     {
-        this.renderer = new Renderer();
+        this.renderer = new RendererGpu();
         this.physics = new Physics(this.renderer.width, this.renderer.height);
         this.mainLoop();
     }

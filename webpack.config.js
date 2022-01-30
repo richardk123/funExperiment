@@ -10,7 +10,15 @@ module.exports = {
         exclude: /node_modules/,
         include: [path.resolve(__dirname, 'src')]
       },
-    ],
+      {
+        test: /\.(glsl|vs|fs|vert|frag)$/,
+        exclude: /node_modules/,
+        use: [
+          'raw-loader',
+          'glslify-loader'
+        ]
+      }
+    ]
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
