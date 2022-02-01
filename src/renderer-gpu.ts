@@ -105,14 +105,14 @@ export class RendererGpu implements Renderer
 
         this.renderFunc = () =>
         {
-            angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+            angle = performance.now() / 500 / 6 * 2 * Math.PI;
             
             // Tell WebGL how to convert from clip space to pixels
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
             // view matrix
             var viewMatrix = new Float32Array(16);
-            GLM.mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
+            GLM.mat4.lookAt(viewMatrix, [0, 0, -15], [0, 0, 0], [0, 1, 0]);
             this.gl.uniformMatrix4fv(matViewUniformLocation, false, viewMatrix);
             
             // projection matrix
@@ -128,10 +128,10 @@ export class RendererGpu implements Renderer
 
             // world matrixes for each element
             matrices.forEach((worldMatrix, index) => {
-                GLM.mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-                GLM.mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
+                GLM.mat4.fromTranslation(worldMatrix, [0, index / 2, 0]);
+                GLM.mat4.rotate(yRotationMatrix, worldMatrix, index + 1 * angle, [0, 1, 0]);
+                GLM.mat4.rotate(xRotationMatrix, worldMatrix, index + 1 *  angle / 4, [1, 0, 0]);
                 GLM.mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
-                GLM.mat4.translate(worldMatrix, worldMatrix , [0, index, 0]);
             });
             
             // upload the new matrix data
