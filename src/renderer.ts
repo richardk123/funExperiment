@@ -1,8 +1,7 @@
-import {Star} from "./star";
 
 export interface Renderer
 {
-    render(stars: Array<Star>): void;
+    render(): void;
 
     width: number;
 

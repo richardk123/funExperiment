@@ -1,63 +1,196 @@
-import {web} from "webpack";
 import {Renderer} from "./renderer";
-import {Star} from "./star";
+import * as GLM from 'gl-matrix'
 import vertexShaderFile from '!!raw-loader!./shader/vertex.glsl';
 import fragmentShaderFile from '!!raw-loader!./shader/fragment.glsl';
 
 export class RendererGpu implements Renderer
 {
-
-    metaballsData: WebGLUniformLocation;
-    metaballsCount: WebGLUniformLocation;
-    webgl: WebGLRenderingContext;
+    gl: WebGLRenderingContext;
     width: number;
     height: number;
+
+    angle = 0;
+    xRotationMatrix = new Float32Array(16);
+    yRotationMatrix = new Float32Array(16);
+    identityMatrix = new Float32Array(16);
+    worldMatrix = new Float32Array(16);
+    boxIndices: Array<number>;
+    matWorldUniformLocation: WebGLUniformLocation;
 
     constructor()
     {
         var canvas = <HTMLCanvasElement> document.getElementById("canvas");
-        var webgl = canvas.getContext('webgl');
+        var gl = canvas.getContext('webgl');
 
-        var vertexShader = this.compileShader(webgl.VERTEX_SHADER , vertexShaderFile, webgl);
-        var fragmentShader = this.compileShader(webgl.FRAGMENT_SHADER ,fragmentShaderFile, webgl);
+        if (!gl) 
+        {
+            alert('Your browser does not support WebGL');
+        }
 
-        var program = webgl.createProgram();
-        webgl.attachShader(program, vertexShader);
-        webgl.attachShader(program, fragmentShader);
-        webgl.linkProgram(program);
-        webgl.useProgram(program);
+        gl.clearColor(0, 0, 0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        
+        // optimalizations
+        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.CULL_FACE);
+        gl.frontFace(gl.CCW);
+        gl.cullFace(gl.BACK);
 
-        var vertexData = new Float32Array([
-            -1.0,  1.0, // top left
-            -1.0, -1.0, // bottom left
-            1.0,  1.0, // top right
-            1.0, -1.0, // bottom right
-        ]);
-        var vertexDataBuffer = webgl.createBuffer();
-        webgl.bindBuffer(webgl.ARRAY_BUFFER, vertexDataBuffer);
-        webgl.bufferData(webgl.ARRAY_BUFFER, vertexData, webgl.STATIC_DRAW);
+        var vertexShader = this.compileShader(gl.VERTEX_SHADER , vertexShaderFile, gl);
+        var fragmentShader = this.compileShader(gl.FRAGMENT_SHADER ,fragmentShaderFile, gl);
 
-        // To make the geometry information available in the shader as attributes, we
-        // need to tell WebGL what the layout of our data in the vertex buffer is.
-        var positionHandle = this.getAttribLocation(program, 'position', webgl);
-        webgl.enableVertexAttribArray(positionHandle);
-        webgl.vertexAttribPointer(positionHandle,
-            2, // position is a vec2
-            webgl.FLOAT, // each component is a float
-            false, // don't normalize values
-            2 * 4, // two 4 byte float components per vertex
-            0 // offset into each span of vertex data
+        var program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        gl.validateProgram(program);
+        if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
+            console.error('ERROR validating program!', gl.getProgramInfoLog(program));
+            return;
+        }
+
+        // create buffer
+        var boxVertices = this.createBoxVertecies();
+        this.boxIndices = this.createBoxIndices();
+
+        var boxVertexBufferObject = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
+
+        var boxIndexBufferObject = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.boxIndices), gl.STATIC_DRAW);
+
+        var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+        var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
+
+        gl.vertexAttribPointer(
+            positionAttribLocation, // Attribute location
+            3, // Number of elements per attribute
+            gl.FLOAT, // Type of elements
+            false,
+            6 * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
+            0 // Offset from the beginning of a single vertex to this attribute
         );
+        gl.vertexAttribPointer(
+            colorAttribLocation, // Attribute location
+            3, // Number of elements per attribute
+            gl.FLOAT, // Type of elements
+            false,
+            6 * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
+            3 * Float32Array.BYTES_PER_ELEMENT // Offset from the beginning of a single vertex to this attribute
+        );
+    
+        gl.enableVertexAttribArray(positionAttribLocation);
+        gl.enableVertexAttribArray(colorAttribLocation);
 
-        this.metaballsData = this.getUniformLocation(program, 'metaballs', webgl);
-        this.metaballsCount = this.getUniformLocation(program, 'metaballsCount', webgl);
-        this.webgl = webgl;
+        gl.useProgram(program);
 
-
+        this.matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
+        var matViewUniformLocation = gl.getUniformLocation(program, 'mView');
+        var matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
+        
+        var viewMatrix = new Float32Array(16);
+        var projMatrix = new Float32Array(16);
+        GLM.mat4.identity(this.worldMatrix);
+        GLM.mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
+        GLM.mat4.perspective(projMatrix, GLM.glMatrix.toRadian(45), canvas.clientWidth / canvas.clientHeight, 0.1, 1000.0);
+    
+        gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.worldMatrix);
+        gl.uniformMatrix4fv(matViewUniformLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(matProjUniformLocation, false, projMatrix);
+    
+        // set global parameters
+        this.gl = gl;
         this.width = canvas.width;
         this.height = canvas.height;
+        GLM.mat4.identity(this.identityMatrix);
     }
 
+    render(): void
+    {
+		this.angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+		GLM.mat4.rotate(this.yRotationMatrix, this.identityMatrix, this.angle, [0, 1, 0]);
+		GLM.mat4.rotate(this.xRotationMatrix, this.identityMatrix, this.angle / 4, [1, 0, 0]);
+		GLM.mat4.mul(this.worldMatrix, this.yRotationMatrix, this.xRotationMatrix);
+		this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.worldMatrix);
+
+		this.gl.clearColor(0.75, 0.85, 0.8, 1.0);
+		this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+		this.gl.drawElements(this.gl.TRIANGLES, this.boxIndices.length, this.gl.UNSIGNED_SHORT, 0);
+    }
+
+    createBoxVertecies(): Array<number>
+    {
+       return [ // X, Y, Z           R, G, B
+            // Top
+            -1.0, 1.0, -1.0,   0.5, 0.5, 0.5,
+            -1.0, 1.0, 1.0,    0.5, 0.5, 0.5,
+            1.0, 1.0, 1.0,     0.5, 0.5, 0.5,
+            1.0, 1.0, -1.0,    0.5, 0.5, 0.5,
+    
+            // Left
+            -1.0, 1.0, 1.0,    0.75, 0.25, 0.5,
+            -1.0, -1.0, 1.0,   0.75, 0.25, 0.5,
+            -1.0, -1.0, -1.0,  0.75, 0.25, 0.5,
+            -1.0, 1.0, -1.0,   0.75, 0.25, 0.5,
+    
+            // Right
+            1.0, 1.0, 1.0,    0.25, 0.25, 0.75,
+            1.0, -1.0, 1.0,   0.25, 0.25, 0.75,
+            1.0, -1.0, -1.0,  0.25, 0.25, 0.75,
+            1.0, 1.0, -1.0,   0.25, 0.25, 0.75,
+    
+            // Front
+            1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
+            1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
+            -1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
+            -1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
+    
+            // Back
+            1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
+            1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
+            -1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
+            -1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
+    
+            // Bottom
+            -1.0, -1.0, -1.0,   0.5, 0.5, 1.0,
+            -1.0, -1.0, 1.0,    0.5, 0.5, 1.0,
+            1.0, -1.0, 1.0,     0.5, 0.5, 1.0,
+            1.0, -1.0, -1.0,    0.5, 0.5, 1.0,
+        ];
+    }
+
+    createBoxIndices(): Array<number>
+    {
+        return [
+            // Top
+            0, 1, 2,
+            0, 2, 3,
+    
+            // Left
+            5, 4, 6,
+            6, 4, 7,
+    
+            // Right
+            8, 9, 10,
+            8, 10, 11,
+    
+            // Front
+            13, 12, 14,
+            15, 14, 12,
+    
+            // Back
+            16, 17, 18,
+            16, 18, 19,
+    
+            // Bottom
+            21, 20, 22,
+            22, 20, 23
+        ];
+    }
+    
     // Utility to complain loudly if we fail to find the uniform
     getUniformLocation(program, name, webgl: WebGLRenderingContext): WebGLUniformLocation {
         var uniformLocation = webgl.getUniformLocation(program, name);
@@ -75,7 +208,6 @@ export class RendererGpu implements Renderer
         return attributeLocation;
     }
 
-
     compileShader(shaderType: GLenum, shaderSource: string, webgl: WebGLRenderingContext): WebGLShader
     {
         var shader = webgl.createShader(shaderType);
@@ -87,26 +219,5 @@ export class RendererGpu implements Renderer
         }
 
         return shader;
-    }
-
-    render(stars: Array<Star>): void
-    {
-        // To send the data to the GPU, we first need to
-        // flatten our data into a single array.
-        var dataToSendToGPU = new Float32Array(4 * stars.length);
-
-        stars.forEach((star, index) =>
-        {
-            var baseIndex = 4 * index;
-            dataToSendToGPU[baseIndex + 0] = star.position.x;
-            dataToSendToGPU[baseIndex + 1] = star.position.y;
-            dataToSendToGPU[baseIndex + 2] = star.radius;
-            dataToSendToGPU[baseIndex + 3] = star.mass;
-        });
-
-        this.webgl.uniform4fv(this.metaballsData, dataToSendToGPU);
-        this.webgl.uniform1i(this.metaballsCount, stars.length);
-
-        this.webgl.drawArrays(this.webgl.TRIANGLE_STRIP, 0, 4);
     }
 }

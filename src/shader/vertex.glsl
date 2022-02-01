@@ -1,7 +1,13 @@
-attribute vec2 position;
+precision mediump float;
+
+attribute vec3 vertPosition;
+attribute vec3 vertColor;
+varying vec3 fragColor;
+uniform mat4 mWorld;
+uniform mat4 mView;
+uniform mat4 mProj;
 
 void main() {
-    // position specifies only x and y.
-    // We set z to be 0.0, and w to be 1.0
-    gl_Position = vec4(position, 0.0, 1.0);
+    fragColor = vertColor;
+    gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
 }
