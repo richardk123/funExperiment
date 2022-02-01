@@ -14,18 +14,13 @@ export class RendererGpu implements Renderer
     constructor()
     {
         var canvas = <HTMLCanvasElement> document.getElementById("canvas");
-        var gl = canvas.getContext('webgl');
+        var gl = canvas.getContext('webgl2');
         
         // optimalizations
         gl.enable(gl.DEPTH_TEST);
-        // gl.enable(gl.CULL_FACE);
+        gl.enable(gl.CULL_FACE);
         gl.frontFace(gl.CCW);
-        // gl.cullFace(gl.BACK);
-
-        const ext = gl.getExtension('ANGLE_instanced_arrays');
-        if (!ext) {
-          alert('need ANGLE_instanced_arrays'); 
-        }
+        gl.cullFace(gl.BACK);
 
         // vertex and fragment shaders
         var vertexShader = this.compileShader(gl.VERTEX_SHADER , vertexShaderFile, gl);
@@ -43,20 +38,7 @@ export class RendererGpu implements Renderer
             console.error('ERROR validating program!', gl.getProgramInfoLog(program));
             return;
         }
-
-        // attributes and uniforms
-        let positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-        let colorAttribLocation = gl.getAttribLocation(program, 'color');
-        let matWorldAttribLocation = gl.getAttribLocation(program, 'mWorld');
         
-        let matViewUniformLocation = gl.getUniformLocation(program, 'mView');
-        let matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
-
-        // cube buffer
-        var positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, Shape.cross, gl.STATIC_DRAW);
-
         // make a typed array with one view per matrix
         const numInstances = 5;
         const matrixData = new Float32Array(numInstances * 16);
@@ -71,10 +53,28 @@ export class RendererGpu implements Renderer
                 numFloatsForView));
         }
 
+        // matrix buffer
         const matrixBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);
-        // just allocate the buffer
         gl.bufferData(gl.ARRAY_BUFFER, matrixData.byteLength, gl.DYNAMIC_DRAW);
+
+        // indicies
+        var boxIndexBufferObject = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Shape.cubeIndicies, gl.STATIC_DRAW);
+
+        // attributes and uniforms
+        let positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+        let colorAttribLocation = gl.getAttribLocation(program, 'color');
+        let matWorldAttribLocation = gl.getAttribLocation(program, 'mWorld');
+        
+        let matViewUniformLocation = gl.getUniformLocation(program, 'mView');
+        let matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
+
+        // cube buffer
+        var positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, Shape.cube, gl.STATIC_DRAW);
     
         const colorBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -98,40 +98,47 @@ export class RendererGpu implements Renderer
         // parameters
         const identityMatrix = new Float32Array(16);
         GLM.mat4.identity(identityMatrix);
+
         let angle = 0;
+        let xRotationMatrix = new Float32Array(16);
+        let yRotationMatrix = new Float32Array(16);
 
         this.renderFunc = () =>
         {
             angle = performance.now() / 1000 / 6 * 2 * Math.PI;
-
+            
             // Tell WebGL how to convert from clip space to pixels
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-            // camera
+            // view matrix
             var viewMatrix = new Float32Array(16);
             GLM.mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
             this.gl.uniformMatrix4fv(matViewUniformLocation, false, viewMatrix);
             
-            // projection
+            // projection matrix
             const aspectRation = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
             var projMatrix = new Float32Array(16);
             GLM.mat4.perspective(projMatrix, GLM.glMatrix.toRadian(45), aspectRation, 0.1, 1000.0);
             this.gl.uniformMatrix4fv(matProjUniformLocation, false, projMatrix);
-            
+
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
             gl.enableVertexAttribArray(positionAttribLocation);
-            gl.vertexAttribPointer(positionAttribLocation, 2, gl.FLOAT, false, 0, 0);
+            gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, false, 0, 0);
+            
 
-            // update all the matrices
-            matrices.forEach((mat, index) => {
-                GLM.mat4.fromTranslation(mat, [0, index, 0]);
+            // world matrixes for each element
+            matrices.forEach((worldMatrix, index) => {
+                GLM.mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
+                GLM.mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
+                GLM.mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
+                GLM.mat4.translate(worldMatrix, worldMatrix , [0, index, 0]);
             });
-
+            
             // upload the new matrix data
             gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);
             gl.bufferSubData(gl.ARRAY_BUFFER, 0, matrixData);
 
-            // set all 4 attributes for matrix
+            // set all 4 attributes for world matrix
             const bytesPerMatrix = 4 * 16;
             for (let i = 0; i < 4; ++i) 
             {
@@ -147,8 +154,8 @@ export class RendererGpu implements Renderer
                     bytesPerMatrix,   // stride, num bytes to advance to get to next set of values
                     offset,           // offset in buffer
                 );
-                // this line says this attribute only changes for each 1 instance
-                ext.vertexAttribDivisorANGLE(loc, 1);
+                // // this line says this attribute only changes for each 1 instance
+                gl.vertexAttribDivisor(loc, 1);
             }
 
             // set attribute for color
@@ -156,16 +163,17 @@ export class RendererGpu implements Renderer
             gl.enableVertexAttribArray(colorAttribLocation);
             gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
             // this line says this attribute only changes for each 1 instance
-            ext.vertexAttribDivisorANGLE(colorAttribLocation, 1);
+            gl.vertexAttribDivisor(colorAttribLocation, 1);
 
             gl.clearColor(0, 0, 0, 1.0);
             gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-            ext.drawArraysInstancedANGLE(
+            gl.drawElementsInstanced(
                 gl.TRIANGLES,
-                0,             // offset
-                12,   // num vertices per instance
-                numInstances,  // num instances
+                Shape.cubeIndicies.length,   // num vertices per instance
+                gl.UNSIGNED_SHORT,
+                0,
+                numInstances  // num instances
               );
         }
     }
