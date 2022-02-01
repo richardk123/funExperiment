@@ -26,9 +26,6 @@ export class RendererGpu implements Renderer
         {
             alert('Your browser does not support WebGL');
         }
-
-        gl.clearColor(0, 0, 0, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
         // optimalizations
         gl.enable(gl.DEPTH_TEST);
@@ -116,7 +113,7 @@ export class RendererGpu implements Renderer
 		GLM.mat4.mul(this.worldMatrix, this.yRotationMatrix, this.xRotationMatrix);
 		this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.worldMatrix);
 
-		this.gl.clearColor(0.75, 0.85, 0.8, 1.0);
+		this.gl.clearColor(0, 0, 0, 1.0);
 		this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
 		this.gl.drawElements(this.gl.TRIANGLES, this.boxIndices.length, this.gl.UNSIGNED_SHORT, 0);
     }
