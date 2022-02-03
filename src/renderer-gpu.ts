@@ -1,17 +1,21 @@
-import {Cube, Renderer} from "./renderer";
+import { Renderer} from "./renderer";
 import * as GLM from 'gl-matrix'
 import vertexShaderFile from '!!raw-loader!./shader/vertex.glsl';
 import fragmentShaderFile from '!!raw-loader!./shader/fragment.glsl';
 import { Shape } from "./shape";
 import { Position } from "./component/position";
 import { Color } from "./component/color";
+import { Entity } from "tick-knock";
+import { Rotation } from "./component/rotation";
 
 export class RendererGpu implements Renderer
 {
     gl: WebGLRenderingContext;
     width: number;
     height: number;
-    renderFunc: (staticCubes: Cube[]) => void;
+    renderFunc: (entities: ReadonlyArray<Entity>) => void;
+
+    static MAX_NUMBER_OF_INSTANCES = Math.pow(20, 2);
 
     constructor()
     {
@@ -53,6 +57,32 @@ export class RendererGpu implements Renderer
         
         let matViewUniformLocation = this.getUniformLocation(program, 'mView', gl);
         let matProjUniformLocation = this.getUniformLocation(program, 'mProj', gl);
+        
+        // world matrix data
+        const matrixData = new Float32Array(RendererGpu.MAX_NUMBER_OF_INSTANCES * 16);
+        let matrixBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, matrixData.byteLength, gl.DYNAMIC_DRAW);
+
+        // set all 4 attributes for world matrix
+        const bytesPerMatrix = 4 * 16;
+        for (let i = 0; i < 4; ++i) 
+        {
+            const loc = matWorldAttribLocation + i;
+            gl.enableVertexAttribArray(loc);
+            const offset = i * 16;
+            gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, bytesPerMatrix, offset);
+            gl.vertexAttribDivisor(loc, 1);
+        }
+
+        // color data
+        const colorData = new Float32Array(RendererGpu.MAX_NUMBER_OF_INSTANCES * 4);
+        const colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, colorData.byteLength, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(colorAttribLocation);
+        gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribDivisor(colorAttribLocation, 1);
 
         // cube
         var positionBuffer = gl.createBuffer();
@@ -60,7 +90,7 @@ export class RendererGpu implements Renderer
         gl.bufferData(gl.ARRAY_BUFFER, Shape.cube, gl.STATIC_DRAW);
         gl.enableVertexAttribArray(positionAttribLocation);
         gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, false, 0, 0);
-    
+
         gl.useProgram(program);
         
         // set global parameters
@@ -72,10 +102,6 @@ export class RendererGpu implements Renderer
         const identityMatrix = new Float32Array(16);
         GLM.mat4.identity(identityMatrix);
 
-        let xRotationMatrix = new Float32Array(16);
-        let yRotationMatrix = new Float32Array(16);
-        let zRotationMatrix = new Float32Array(16);
-
         this.renderFunc = (cubes) =>
         {
             const numInstances = cubes.length;
@@ -85,7 +111,7 @@ export class RendererGpu implements Renderer
 
             // view matrix
             var viewMatrix = new Float32Array(16);
-            GLM.mat4.lookAt(viewMatrix, [0, 0, -15], [0, 0, 0], [0, 1, 0]);
+            GLM.mat4.lookAt(viewMatrix, [0, 0, -20], [0, 0, 0], [0, 1, 0]);
             this.gl.uniformMatrix4fv(matViewUniformLocation, false, viewMatrix);
             
             // projection matrix
@@ -95,81 +121,52 @@ export class RendererGpu implements Renderer
             this.gl.uniformMatrix4fv(matProjUniformLocation, false, projMatrix);
 
 
-            // martix update
             {
-                const matrixData = new Float32Array(2 * 16);
-                const matrices = [];
+                // martix update
                 for (let i = 0; i < numInstances; ++i) 
                 {
                     const byteOffsetToMatrix = i * 16 * 4;
-                    const numFloatsForView = 16;
-                    matrices.push(new Float32Array(matrixData.buffer, byteOffsetToMatrix, numFloatsForView));
+                    const worldMatrix = new Float32Array(matrixData.buffer, byteOffsetToMatrix, 16);
+                    const positionComponent = cubes[i].get(Position);
+
+                    GLM.mat4.fromTranslation(worldMatrix, positionComponent.position);
+
+                    // const rotation = cubes[i].get(Rotation);
+                    // if (rotation)
+                    // {
+                    //     // //TODO: rotation
+                    //     // let xRotationMatrix = new Float32Array(16);
+                    //     // let yRotationMatrix = new Float32Array(16);
+                    //     // let zRotationMatrix = new Float32Array(16);
+                    //     // GLM.mat4.rotate(xRotationMatrix, worldMatrix, rotation.x, [1, 0, 0]);
+                    //     // GLM.mat4.rotate(yRotationMatrix, worldMatrix, rotation.y, [0, 1, 0]);
+                    //     // GLM.mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
+                    //     // GLM.mat4.rotate(worldMatrix, worldMatrix, rotation.z, [0, 0, 1]);
+                    // }
+
+                    const colorComponent = cubes[i].get(Color);
+                    const offset = i * 4;
+                    colorData.set(colorComponent.color, offset);
                 }
 
-                // world matrixes for each element
-                matrices.forEach((worldMatrix, index) => 
-                {
-                    const position = cubes[index].position;
-                    GLM.mat4.fromTranslation(worldMatrix, [position.x, position.y, position.z]);
-
-                    const rotation = cubes[index].rotation;
-                    if (rotation)
-                    {
-                        GLM.mat4.rotate(xRotationMatrix, worldMatrix, rotation.x, [1, 0, 0]);
-                        GLM.mat4.rotate(yRotationMatrix, worldMatrix, rotation.y, [0, 1, 0]);
-                        GLM.mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
-                    }
-                });
-                
-                let matrixBuffer = gl.createBuffer();
-                gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);
-                gl.bufferData(gl.ARRAY_BUFFER, matrixData.byteLength, gl.DYNAMIC_DRAW);
                 gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);
                 gl.bufferSubData(gl.ARRAY_BUFFER, 0, matrixData);
 
-                // set all 4 attributes for world matrix
-                const bytesPerMatrix = 4 * 16;
-                for (let i = 0; i < 4; ++i) 
-                {
-                    const loc = matWorldAttribLocation + i;
-                    gl.enableVertexAttribArray(loc);
-                    const offset = i * 16;
-                    gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, bytesPerMatrix, offset);
-                    gl.vertexAttribDivisor(loc, 1);
-                }
-            }
-
-            // color
-            {
-                const colorData = new Array<number>(numInstances * 4);
-                for (let i = 0; i < numInstances; i++)
-                {
-                    const color = cubes[i].color;
-                    colorData[i * 4 + 0] = color.r;
-                    colorData[i * 4 + 1] = color.g;
-                    colorData[i * 4 + 2] = color.b;
-                    colorData[i * 4 + 3] = color.alpha;
-                }
-
-                const colorBuffer = gl.createBuffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorData), gl.STATIC_DRAW);
-                gl.enableVertexAttribArray(colorAttribLocation);
-                gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
-                gl.vertexAttribDivisor(colorAttribLocation, 1);
+                gl.bufferData(gl.ARRAY_BUFFER, colorData, gl.STATIC_DRAW);
             }
 
 
-            gl.clearColor(0, 0, 0, 1.0);
+            gl.clearColor(0.5, 0.5, 0.5, 1.0);
             gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
             gl.drawElementsInstanced(gl.TRIANGLES, Shape.cubeIndicies.length, gl.UNSIGNED_SHORT, 0, numInstances);
         }
     }
 
-    render(cubes: Cube[]): void
+    render(entities: ReadonlyArray<Entity>): void
     {
-        this.renderFunc(cubes);
+        this.renderFunc(entities);
     }
 
     // Utility to complain loudly if we fail to find the uniform
