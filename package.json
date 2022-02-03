@@ -31,6 +31,7 @@
     "webpack-dev-server": "^4.7.2"
   },
   "dependencies": {
+    "tick-knock": "^4.0.2",
     "vector2d": "^3.0.0"
   }
 }

@@ -1,7 +1,8 @@
+import { Position } from "./component/position";
 
 export interface Renderer
 {
-    render(): void;
+    render(positions: Position[]): void;
 
     width: number;
 
