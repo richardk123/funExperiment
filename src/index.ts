@@ -1,7 +1,7 @@
 import { Engine, Entity } from "tick-knock";
 import { Color } from "./component/color";
 import { Position } from "./component/position";
-import {Renderer} from "./renderer";
+import { Rotation } from "./component/rotation";
 import {RendererGpu} from "./renderer-gpu";
 import { CubeMeshRenderer } from "./system/cube-mesh-renderer";
 
@@ -15,6 +15,7 @@ class Application
         const entity = new Entity();
         entity.add(new Position(0, 0 ,0));
         entity.add(new Color(1, 0 ,0, 1));
+        entity.add(new Rotation(Math.PI / 4, 0 ,0));
         engine.addEntity(entity);
 
         const entity2 = new Entity();
