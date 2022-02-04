@@ -11,6 +11,7 @@ export class CubeMeshRenderer extends System
 
     public update(): void 
     {
+        const {entities} = this.engine;
         this.renderer.render(this.engine.entities);
     }
 }

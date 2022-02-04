@@ -44,23 +44,24 @@ export class RendererGpu implements Renderer
             console.error('ERROR validating program!', gl.getProgramInfoLog(program));
             return;
         }
-        
-        // indicies
-        var boxIndexBufferObject = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Shape.cubeIndicies, gl.STATIC_DRAW);
 
-        // attributes and uniforms
-        let positionAttribLocation = this.getAttribLocation(program, 'vertPosition', gl);
-        let colorAttribLocation = this.getAttribLocation(program, 'color', gl);
-        let matWorldAttribLocation = this.getAttribLocation(program, 'mWorld', gl);
+        // attributes
+        const positionAttribLocation = this.getAttribLocation(program, 'vertPosition', gl);
+        const colorAttribLocation = this.getAttribLocation(program, 'color', gl);
+        const matWorldAttribLocation = this.getAttribLocation(program, 'mWorld', gl);
+        const normalAttribLocation = this.getAttribLocation(program, 'vertNormal', gl);
         
-        let matViewUniformLocation = this.getUniformLocation(program, 'mView', gl);
-        let matProjUniformLocation = this.getUniformLocation(program, 'mProj', gl);
-        
+        // uniforms
+        const matViewUniformLocation = this.getUniformLocation(program, 'mView', gl);
+        const matProjUniformLocation = this.getUniformLocation(program, 'mProj', gl);
+
+        const ambientLightIntensityUniformLocation = this.getUniformLocation(program, 'ambientLightIntensity', gl);
+        const sunlightIntensityUniformLocation = this.getUniformLocation(program, 'sunlightIntensity', gl);
+        const sunlightDirectionLocation = this.getUniformLocation(program, 'sunlightDirection', gl);
+
         // world matrix data
         const matrixData = new Float32Array(RendererGpu.MAX_NUMBER_OF_INSTANCES * 16);
-        let matrixBuffer = gl.createBuffer();
+        const matrixBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, matrixData.byteLength, gl.DYNAMIC_DRAW);
 
@@ -84,12 +85,25 @@ export class RendererGpu implements Renderer
         gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
         gl.vertexAttribDivisor(colorAttribLocation, 1);
 
+        // indicies
+        const boxIndexBufferObject = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Shape.cubeIndicies, gl.STATIC_DRAW);
+
         // cube
-        var positionBuffer = gl.createBuffer();
+        const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, Shape.cube, gl.STATIC_DRAW);
         gl.enableVertexAttribArray(positionAttribLocation);
         gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, false, 0, 0);
+
+        // cube normals
+        const normalBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, Shape.cubeNormals, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(normalAttribLocation, 3, gl.FLOAT, true, 0, 0);
+        gl.enableVertexAttribArray(normalAttribLocation);
+
 
         gl.useProgram(program);
         
@@ -108,6 +122,11 @@ export class RendererGpu implements Renderer
 
             // Tell WebGL how to convert from clip space to pixels
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            // lighting
+            gl.uniform3f(ambientLightIntensityUniformLocation, 0.3, 0.3, 0.3);
+            gl.uniform3f(sunlightIntensityUniformLocation, 0.4, 0.4, 0.4);
+            gl.uniform3f(sunlightDirectionLocation, 10.0, 10.0, 2.0);
 
             // view matrix
             var viewMatrix = new Float32Array(16);
