@@ -8,4 +8,19 @@ export class Direction
         this.direction[1] = y;
         this.direction[2] = z;
     }
+
+    get x(): number
+    {
+        return this.direction[0];
+    }
+
+    get y(): number
+    {
+        return this.direction[1];
+    }
+
+    get z(): number
+    {
+        return this.direction[2];
+    }
 }

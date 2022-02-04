@@ -7,13 +7,16 @@ import { Position } from "./component/position";
 import { Color } from "./component/color";
 import { Entity } from "tick-knock";
 import { Rotation } from "./component/rotation";
+import {AmbientLightIntensity} from "./component/light/abmient-light-intensity";
+import {SunlightIntensity} from "./component/light/sun-light-intensity";
+import {Direction} from "./component/direction";
 
 export class RendererGpu implements Renderer
 {
     gl: WebGLRenderingContext;
     width: number;
     height: number;
-    renderFunc: (entities: ReadonlyArray<Entity>) => void;
+    renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity) => void;
 
     static MAX_NUMBER_OF_INSTANCES = Math.pow(20, 2);
 
@@ -116,7 +119,7 @@ export class RendererGpu implements Renderer
         const identityMatrix = new Float32Array(16);
         GLM.mat4.identity(identityMatrix);
 
-        this.renderFunc = (cubes) =>
+        this.renderFunc = (cubes, sun) =>
         {
             const numInstances = cubes.length;
 
@@ -124,9 +127,13 @@ export class RendererGpu implements Renderer
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
             // lighting
-            gl.uniform3f(ambientLightIntensityUniformLocation, 0.3, 0.3, 0.3);
-            gl.uniform3f(sunlightIntensityUniformLocation, 0.4, 0.4, 0.4);
-            gl.uniform3f(sunlightDirectionLocation, 10.0, 10.0, 2.0);
+            const ambientLightIntensity = sun.get(AmbientLightIntensity);
+            const sunlightIntensity = sun.get(SunlightIntensity);
+            const sunLightDirection = sun.get(Direction);
+
+            gl.uniform3f(ambientLightIntensityUniformLocation, ambientLightIntensity.x, ambientLightIntensity.y, ambientLightIntensity.z);
+            gl.uniform3f(sunlightIntensityUniformLocation, sunlightIntensity.x, sunlightIntensity.y, sunlightIntensity.z);
+            gl.uniform3f(sunlightDirectionLocation, sunLightDirection.x, sunLightDirection.y, sunLightDirection.z);
 
             // view matrix
             var viewMatrix = new Float32Array(16);
@@ -183,9 +190,9 @@ export class RendererGpu implements Renderer
         }
     }
 
-    render(entities: ReadonlyArray<Entity>): void
+    render(boxes: ReadonlyArray<Entity>, sun: Entity): void
     {
-        this.renderFunc(entities);
+        this.renderFunc(boxes, sun);
     }
 
     // Utility to complain loudly if we fail to find the uniform

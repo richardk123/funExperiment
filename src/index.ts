@@ -7,8 +7,9 @@ import { Position } from "./component/position";
 import { Rotation } from "./component/rotation";
 import { EntityTags } from "./entity/entity-tags";
 import {RendererGpu} from "./renderer-gpu";
-import { CubeMeshRenderer } from "./system/cube-mesh-renderer";
+import { RendererSystem } from "./system/renderer-system";
 import { Utils } from "./utils";
+import {DayNightSystem} from "./system/day-night-system";
 
 
 class Application
@@ -19,7 +20,7 @@ class Application
         const size = 20;
 
         const sun = new Entity()
-            .add(new AmbientLightIntensity(0.3, 0.3, 0.3))
+            .add(new AmbientLightIntensity(0.0, 0.0, 0.0))
             .add(new SunlightIntensity(0.4, 0.4, 0.4))
             .add(new Direction(10.0, 10.0, 2.0))
             .add(EntityTags.SUN);
@@ -32,7 +33,7 @@ class Application
             {
                 const entity = new Entity();
                 entity.add(new Position((size / 2) - x, (size / 2) - y , Utils.randomBool() ? 1 : 0));
-                entity.add(new Color(1, 0 , 0, 1));
+                entity.add(new Color(Math.random(), Math.random() , Math.random(), 1));
                 // entity.add(new Rotation(Math.PI * Math.random(), Math.PI  * Math.random() , Math.PI  * Math.random()));
                 entity.add(EntityTags.CUBE);
                 engine.addEntity(entity);
@@ -40,9 +41,12 @@ class Application
         }
 
         const renderer = new RendererGpu();
-        const cubeMeshRenderer = new CubeMeshRenderer(renderer);
+        const rendererSystem = new RendererSystem(renderer);
 
-        engine.addSystem(cubeMeshRenderer);
+        const dayNightSystem = new DayNightSystem();
+
+        engine.addSystem(rendererSystem);
+        engine.addSystem(dayNightSystem);
 
         this.mainLoop(engine, 0);
     }

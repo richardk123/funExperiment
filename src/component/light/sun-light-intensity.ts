@@ -8,4 +8,19 @@ export class SunlightIntensity
         this.intensity[1] = y;
         this.intensity[2] = z;
     }
+
+    get x(): number
+    {
+        return this.intensity[0];
+    }
+
+    get y(): number
+    {
+        return this.intensity[1];
+    }
+
+    get z(): number
+    {
+        return this.intensity[2];
+    }
 }

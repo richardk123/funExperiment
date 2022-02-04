@@ -5,7 +5,7 @@ import { Rotation } from "./component/rotation";
 
 export interface Renderer
 {
-    render(entities: ReadonlyArray<Entity>): void;
+    render(boxes: ReadonlyArray<Entity>, sun: Entity): void;
 
     width: number;
 
