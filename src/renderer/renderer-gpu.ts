@@ -15,8 +15,6 @@ import { WebglUtils } from "./webgl-utils";
 export class RendererGpu implements Renderer
 {
     gl: WebGLRenderingContext;
-    width: number;
-    height: number;
     renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity) => void;
 
     static MAX_NUMBER_OF_INSTANCES = Math.pow(20, 2);
@@ -33,6 +31,7 @@ export class RendererGpu implements Renderer
         gl.cullFace(gl.BACK);
 
         const program = WebglUtils.createShaderProgram(gl, vertexShaderFile, fragmentShaderFile);
+        
         // attributes
         const positionAttribLocation = this.getAttribLocation(program, 'vertPosition', gl);
         const colorAttribLocation = this.getAttribLocation(program, 'color', gl);
@@ -97,8 +96,6 @@ export class RendererGpu implements Renderer
         
         // set global parameters
         this.gl = gl;
-        this.width = canvas.width;
-        this.height = canvas.height;
 
         // parameters
         const identityMatrix = new Float32Array(16);
