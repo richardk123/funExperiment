@@ -2,14 +2,15 @@ import { Renderer} from "./renderer";
 import * as GLM from 'gl-matrix'
 import vertexShaderFile from '!!raw-loader!./shader/vertex.glsl';
 import fragmentShaderFile from '!!raw-loader!./shader/fragment.glsl';
-import { Shape } from "./shape";
-import { Position } from "./component/position";
-import { Color } from "./component/color";
+import { Shape } from "../shape";
+import { Position } from "../component/position";
+import { Color } from "../component/color";
 import { Entity } from "tick-knock";
-import { Rotation } from "./component/rotation";
-import {AmbientLightIntensity} from "./component/light/abmient-light-intensity";
-import {SunlightIntensity} from "./component/light/sun-light-intensity";
-import {Direction} from "./component/direction";
+import { Rotation } from "../component/rotation";
+import {AmbientLightIntensity} from "../component/light/abmient-light-intensity";
+import {SunlightIntensity} from "../component/light/sun-light-intensity";
+import {Direction} from "../component/direction";
+import { WebglUtils } from "./webgl-utils";
 
 export class RendererGpu implements Renderer
 {
@@ -31,22 +32,7 @@ export class RendererGpu implements Renderer
         gl.frontFace(gl.CCW);
         gl.cullFace(gl.BACK);
 
-        // vertex and fragment shaders
-        var vertexShader = this.compileShader(gl.VERTEX_SHADER , vertexShaderFile, gl);
-        var fragmentShader = this.compileShader(gl.FRAGMENT_SHADER ,fragmentShaderFile, gl);
-
-        var program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-
-        // validate and print
-        gl.validateProgram(program);
-        if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS))
-        {
-            console.error('ERROR validating program!', gl.getProgramInfoLog(program));
-            return;
-        }
+        const program = WebglUtils.createShaderProgram(gl, vertexShaderFile, fragmentShaderFile);
 
         // attributes
         const positionAttribLocation = this.getAttribLocation(program, 'vertPosition', gl);
@@ -121,6 +107,7 @@ export class RendererGpu implements Renderer
 
         this.renderFunc = (cubes, sun) =>
         {
+            
             const numInstances = cubes.length;
 
             // Tell WebGL how to convert from clip space to pixels
@@ -210,18 +197,5 @@ export class RendererGpu implements Renderer
             throw 'Can not find attribute ' + name + '.';
         }
         return attributeLocation;
-    }
-
-    private compileShader(shaderType: GLenum, shaderSource: string, webgl: WebGLRenderingContext): WebGLShader
-    {
-        var shader = webgl.createShader(shaderType);
-        webgl.shaderSource(shader, shaderSource);
-        webgl.compileShader(shader);
-
-        if (!webgl.getShaderParameter(shader, webgl.COMPILE_STATUS)) {
-            throw "Shader compile failed with: " + webgl.getShaderInfoLog(shader);
-        }
-
-        return shader;
     }
 }

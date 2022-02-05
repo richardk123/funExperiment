@@ -1,6 +1,6 @@
 import { Entity, Query, System } from "tick-knock";
-import { Renderer } from "../renderer";
 import {EntityTags} from "../entity/entity-tags";
+import { Renderer } from "../renderer/renderer";
 
 const boxQuery = new Query((entity: Entity) => {
     return entity.has(EntityTags.CUBE);
