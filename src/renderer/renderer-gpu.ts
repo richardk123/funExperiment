@@ -33,7 +33,6 @@ export class RendererGpu implements Renderer
         gl.cullFace(gl.BACK);
 
         const program = WebglUtils.createShaderProgram(gl, vertexShaderFile, fragmentShaderFile);
-
         // attributes
         const positionAttribLocation = this.getAttribLocation(program, 'vertPosition', gl);
         const colorAttribLocation = this.getAttribLocation(program, 'color', gl);
@@ -107,7 +106,6 @@ export class RendererGpu implements Renderer
 
         this.renderFunc = (cubes, sun) =>
         {
-            
             const numInstances = cubes.length;
 
             // Tell WebGL how to convert from clip space to pixels
