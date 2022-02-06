@@ -2,20 +2,20 @@ import { Entity } from "tick-knock";
 import { WebglUtils } from "../webgl-utils";
 import * as GLM from 'gl-matrix';
 
-export class Camera
+export class PespectiveCamera
 {
 
-    private renderer: (camera: Entity) => void;
+    private renderer: (camera: Entity, program: WebGLProgram) => void;
 
-    constructor(gl: WebGL2RenderingContext, program: WebGLProgram)
+    constructor(gl: WebGL2RenderingContext)
     {
-        // uniforms
-        const matViewUniformLocation = WebglUtils.getUniformLocation(program, 'mView', gl);
-        const matProjUniformLocation = WebglUtils.getUniformLocation(program, 'mProj', gl);
-
         //TODO: parametrize from camera
-        this.render = (camera) =>
+        this.render = (camera, program) =>
         {
+            // uniforms
+            const matViewUniformLocation = WebglUtils.getUniformLocation(program, 'mView', gl);
+            const matProjUniformLocation = WebglUtils.getUniformLocation(program, 'mProj', gl);
+
             // view matrix
             var viewMatrix = new Float32Array(16);
             GLM.mat4.lookAt(viewMatrix, [0, 0, -20], [0, 0, 0], [0, 1, 0]);
@@ -29,8 +29,8 @@ export class Camera
         }
     }
 
-    public render(camera: Entity)
+    public render(camera: Entity, program: WebGLProgram)
     {
-        this.render(camera);
+        this.renderer(camera, program);
     }
 }

@@ -1,10 +1,11 @@
-attribute vec4 a_position;
+precision mediump float;
 
-uniform mat4 u_projection;
-uniform mat4 u_view;
-uniform mat4 u_world;
+attribute vec3 vertPosition;
+uniform mat4 u_matrix;
 
-void main() {
-  // Multiply the position by the matrices.
-  gl_Position = u_projection * u_view * u_world * a_position;
+attribute mat4 mWorld;
+
+void main() 
+{
+    gl_Position = u_matrix * mWorld * vec4(vertPosition, 1.0);
 }

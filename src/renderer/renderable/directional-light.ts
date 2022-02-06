@@ -6,20 +6,20 @@ import { WebglUtils } from "../webgl-utils";
 
 export class DirectionalLight
 {
-    private renderer: (sun: Entity) => void;
+    private renderer: (sun: Entity, program: WebGLProgram) => void;
     
-    constructor(gl: WebGL2RenderingContext, program: WebGLProgram)
+    constructor(gl: WebGL2RenderingContext)
     {
-        const ambientLightIntensityUniformLocation = WebglUtils.getUniformLocation(program, 'ambientLightIntensity', gl);
-        const sunlightIntensityUniformLocation = WebglUtils.getUniformLocation(program, 'sunlightIntensity', gl);
-        const sunlightDirectionLocation = WebglUtils.getUniformLocation(program, 'sunlightDirection', gl);
-
-        this.renderer = (sun) =>
+        this.renderer = (sun, program) =>
         {
             // lighting
             const ambientLightIntensity = sun.get(AmbientLightIntensity);
             const sunlightIntensity = sun.get(SunlightIntensity);
             const sunLightDirection = sun.get(Direction);
+
+            const ambientLightIntensityUniformLocation = WebglUtils.getUniformLocation(program, 'ambientLightIntensity', gl);
+            const sunlightIntensityUniformLocation = WebglUtils.getUniformLocation(program, 'sunlightIntensity', gl);
+            const sunlightDirectionLocation = WebglUtils.getUniformLocation(program, 'sunlightDirection', gl);
 
             gl.uniform3f(ambientLightIntensityUniformLocation, ambientLightIntensity.x, ambientLightIntensity.y, ambientLightIntensity.z);
             gl.uniform3f(sunlightIntensityUniformLocation, sunlightIntensity.x, sunlightIntensity.y, sunlightIntensity.z);
@@ -27,8 +27,8 @@ export class DirectionalLight
         }
     }
 
-    public render(sun: Entity)
+    public render(sun: Entity, program: WebGLProgram)
     {
-        this.renderer(sun);
+        this.renderer(sun, program);
     }
 }
