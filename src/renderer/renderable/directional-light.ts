@@ -6,11 +6,9 @@ import { WebglUtils } from "../webgl-utils";
 
 export class DirectionalLight
 {
-    private renderer: (sun: Entity, program: WebGLProgram) => void;
-    
     constructor(gl: WebGL2RenderingContext)
     {
-        this.renderer = (sun, program) =>
+        this.render = (sun, program) =>
         {
             // lighting
             const ambientLightIntensity = sun.get(AmbientLightIntensity);
@@ -29,6 +27,5 @@ export class DirectionalLight
 
     public render(sun: Entity, program: WebGLProgram)
     {
-        this.renderer(sun, program);
     }
 }

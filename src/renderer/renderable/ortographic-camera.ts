@@ -5,7 +5,6 @@ import * as GLM from 'gl-matrix';
 export class OrtographicCamera
 {
 
-    private renderer: (camera: Entity, program: WebGLProgram) => void;
 
     ORTO_SIZE = 100;
 
@@ -15,17 +14,21 @@ export class OrtographicCamera
         this.render = (camera, program) =>
         {
             // uniforms
-            const matrixUniformLocation = WebglUtils.getUniformLocation(program, 'u_matrix', gl);
+            const modelViewMatrixUniformLocation = WebglUtils.getUniformLocation(program, 'modelViewMatrix', gl);
+            const projectionMatrixUniformLocation = WebglUtils.getUniformLocation(program, 'projectionMatrix', gl);
+
+            var modelViewMatrix = new Float32Array(16);
+            GLM.mat4.lookAt(modelViewMatrix, [0, 0, -20], [0, 0, 0], [0, 1, 0]);
+            gl.uniformMatrix4fv(modelViewMatrixUniformLocation, false, modelViewMatrix);
 
             // projection matrix (prevede na -1 to 1 souradnice pro gpu)
-            var matrix = new Float32Array(16);
-            GLM.mat4.ortho(matrix, this.ORTO_SIZE, this.ORTO_SIZE, this.ORTO_SIZE, this.ORTO_SIZE, 0.1, 1000);
-            gl.uniformMatrix4fv(matrixUniformLocation, false, matrix);
+            var projectionMatrix = new Float32Array(16);
+            GLM.mat4.ortho(projectionMatrix, this.ORTO_SIZE, this.ORTO_SIZE, this.ORTO_SIZE, this.ORTO_SIZE, 0.1, 1000);
+            gl.uniformMatrix4fv(projectionMatrixUniformLocation, false, projectionMatrix);
         }
     }
 
     public render(camera: Entity, program: WebGLProgram)
     {
-        this.renderer(camera, program);
     }
 }

@@ -7,8 +7,6 @@ import { Color } from "../../component/color";
 
 export class CubeRenderer
 {
-    private renderer: (cubes: ReadonlyArray<Entity>, program: WebGLProgram) => void;
-
     constructor(gl: WebGL2RenderingContext, maxNumberOfInstances: number)
     {
         // color data
@@ -38,7 +36,7 @@ export class CubeRenderer
         gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, matrixData.byteLength, gl.DYNAMIC_DRAW);
 
-        this.renderer = (cubes, program) =>
+        this.renderCubes = (cubes, program) =>
         {
             const positionAttribLocation = WebglUtils.getAttribLocation(program, 'vertPosition', gl);
             const colorAttribLocation = WebglUtils.getAttribLocation(program, 'color', gl);
@@ -117,6 +115,5 @@ export class CubeRenderer
 
     public renderCubes(cubes: ReadonlyArray<Entity>, program: WebGLProgram): void
     {
-        this.renderer(cubes, program);
     }
 }
