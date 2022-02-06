@@ -29,8 +29,6 @@ export class DayNightSystem extends System
     public update(dt: number): void
     {
         this.angle += dt / 100;
-        console.log(this.angle);
-
 
         const quat = GLM.quat.create();
         const axis = GLM.vec3.fromValues(0, 1, 0);

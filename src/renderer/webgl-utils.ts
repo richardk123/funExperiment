@@ -44,4 +44,23 @@ export class WebglUtils
 
         return shader;
     }
+
+    
+    // Utility to complain loudly if we fail to find the uniform
+    public static getUniformLocation(program, name, webgl: WebGLRenderingContext): WebGLUniformLocation {
+        var uniformLocation = webgl.getUniformLocation(program, name);
+        if (uniformLocation === -1) {
+            throw 'Can not find uniform ' + name + '.';
+        }
+        return uniformLocation;
+    }
+
+    // Utility to complain loudly if we fail to find the attribute
+    public static getAttribLocation(program, name, webgl: WebGLRenderingContext) {
+        var attributeLocation = webgl.getAttribLocation(program, name);
+        if (attributeLocation === -1) {
+            throw 'Can not find attribute ' + name + '.';
+        }
+        return attributeLocation;
+    }
 }
