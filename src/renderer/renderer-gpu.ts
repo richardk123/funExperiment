@@ -29,7 +29,6 @@ export class RendererGpu implements Renderer
         const cubeRenderer = new CubeRenderer(gl, RendererGpu.MAX_NUMBER_OF_INSTANCES);
         const directionalLight = new DirectionalLight(gl);
         const perspectiveCamera = new PespectiveCamera(gl);
-        gl.useProgram(program);
         
         const depthProgram = WebglUtils.createShaderProgram(gl, depthVertexShaderFile, depthFragmentShaderFile);
         const ortographicCamera = new OrtographicCamera(gl);
@@ -52,11 +51,13 @@ export class RendererGpu implements Renderer
 
 
             // standard
+            gl.useProgram(program);
             directionalLight.render(sun, program);
             perspectiveCamera.render(null, program);
             cubeRenderer.renderCubes(cubes, program);
 
             // depth
+            // gl.useProgram(depthProgram);
             // directionalLight.render(sun, depthProgram);
             // ortographicCamera.render(null, depthProgram);
             // cubeRenderer.renderCubes(cubes, depthProgram);
