@@ -108,7 +108,6 @@ export class CubeRenderer
             gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
             gl.vertexAttribDivisor(colorAttribLocation, 1);
          
-    
             gl.drawElementsInstanced(gl.TRIANGLES, Shape.cubeIndicies.length, gl.UNSIGNED_SHORT, 0, numInstances);
     
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);

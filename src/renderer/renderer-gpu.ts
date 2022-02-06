@@ -44,7 +44,6 @@ export class RendererGpu implements Renderer
             //TODO: parametrize
             camera.render(null);
 
-
             gl.clearColor(0, 0, 0, 1.0);
             gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
