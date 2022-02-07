@@ -1,6 +1,6 @@
 import { Entity } from "tick-knock";
 import * as GLM from 'gl-matrix';
-import { Shape } from "../../shape";
+import { Shape } from "../shape";
 import { WebglUtils } from "../webgl-utils";
 import { Position } from "../../component/position";
 import { Color } from "../../component/color";

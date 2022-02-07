@@ -14,7 +14,7 @@ import { OrtographicCamera } from "./renderable/ortographic-camera";
 
 export class RendererGpu implements Renderer
 {
-    renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity) => void;
+    renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity) => void;
 
     static MAX_NUMBER_OF_INSTANCES = Math.pow(20, 2);
     static SHADOW_MAP_SIZE = 2048;
@@ -34,7 +34,7 @@ export class RendererGpu implements Renderer
         const ortographicCamera = new OrtographicCamera(gl);
 
 
-        this.renderFunc = (cubes, sun) =>
+        this.renderFunc = (cubes, sun, cameraPerspective) =>
         {
             // optimalizations
             gl.enable(gl.DEPTH_TEST);
@@ -51,22 +51,22 @@ export class RendererGpu implements Renderer
 
 
             // standard
-            // gl.useProgram(program);
-            // directionalLight.render(sun, program);
-            // perspectiveCamera.render(null, program);
-            // cubeRenderer.renderCubes(cubes, program);
+            gl.useProgram(program);
+            directionalLight.render(sun, program);
+            perspectiveCamera.render(cameraPerspective, program);
+            cubeRenderer.render(cubes, program);
 
             // depth
-            gl.useProgram(depthProgram);
-            directionalLight.render(sun, depthProgram);
-            ortographicCamera.render(null, depthProgram);
-            cubeRenderer.render(cubes, depthProgram);
+            // gl.useProgram(depthProgram);
+            // directionalLight.render(sun, depthProgram);
+            // ortographicCamera.render(null, depthProgram);
+            // cubeRenderer.render(cubes, depthProgram);
 
         }
     }
 
-    render(boxes: ReadonlyArray<Entity>, sun: Entity): void
+    render(boxes: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity): void
     {
-        this.renderFunc(boxes, sun);
+        this.renderFunc(boxes, sun, cameraPerspective);
     }
 }

@@ -1,14 +1,7 @@
-import { Entity, Query, System } from "tick-knock";
-import {EntityTags} from "../entity/entity-tags";
+
+import { System } from "tick-knock";
+import { QueryHolder } from "../query-holder";
 import { Renderer } from "../renderer/renderer";
-
-const boxQuery = new Query((entity: Entity) => {
-    return entity.has(EntityTags.CUBE);
-});
-
-const sunQuery = new Query((entity: Entity) => {
-    return entity.has(EntityTags.SUN);
-});
 
 export class RendererSystem extends System
 {
@@ -17,22 +10,12 @@ export class RendererSystem extends System
         super();
     }
 
-    public onAddedToEngine(): void
-    {
-        this.engine.addQuery(boxQuery);
-        this.engine.addQuery(sunQuery);
-    }
-
-    public onRemovedFromEngine(): void
-    {
-        this.engine.removeQuery(boxQuery);
-        this.engine.removeQuery(sunQuery);
-    }
-
     public update(): void 
     {
-        const boxes = boxQuery.entities;
-        const sun = sunQuery.first;
-        this.renderer.render(boxes, sun);
+        const boxes = QueryHolder.boxQuery.entities;
+        const sun = QueryHolder.sunQuery.first;
+        const cameraPerspective = QueryHolder.cameraPerspectiveQuery.first;
+
+        this.renderer.render(boxes, sun, cameraPerspective);
     }
 }

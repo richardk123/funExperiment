@@ -9,6 +9,9 @@ import {RendererGpu} from "./renderer/renderer-gpu";
 import { RendererSystem } from "./system/renderer-system";
 import { Utils } from "./utils";
 import {DayNightSystem} from "./system/day-night-system";
+import { EyePosition } from "./component/camera/eye-pos";
+import { LookAt } from "./component/camera/look-at";
+import { QueryHolder } from "./query-holder";
 
 
 class Application
@@ -16,7 +19,7 @@ class Application
     constructor()
     {
         const engine = new Engine();
-        const size = 20;
+        QueryHolder.addQueries(engine);
 
         const sun = new Entity()
             .add(new AmbientLightIntensity(0.0, 0.0, 0.0))
@@ -25,7 +28,15 @@ class Application
             .add(EntityTags.SUN);
         
         engine.addEntity(sun);
-
+        
+        const perspectiveCamera = new Entity()
+            .add(new EyePosition(0, -20, 0))
+            .add(new LookAt(0, 0, 0))
+            .add(EntityTags.CAMERA_PERSPECTIVE);
+        
+        engine.addEntity(perspectiveCamera);
+        
+        const size = 20;
         for (let x = 0; x < size; x++)
         {
             for (let y = 0; y < size; y++)
