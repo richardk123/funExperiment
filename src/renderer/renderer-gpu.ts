@@ -2,8 +2,8 @@ import { Renderer} from "./renderer";
 import * as GLM from 'gl-matrix';
 import vertexShaderFile from '!!raw-loader!./shader/vertex.glsl';
 import fragmentShaderFile from '!!raw-loader!./shader/fragment.glsl';
-import depthVertexShaderFile from '!!raw-loader!./shader/vertex.glsl';
-import depthFragmentShaderFile from '!!raw-loader!./shader/fragment.glsl';
+import depthVertexShaderFile from '!!raw-loader!./shader/depth-vertex.glsl';
+import depthFragmentShaderFile from '!!raw-loader!./shader/depth-fragment.glsl';
 
 import { Entity } from "tick-knock";
 import { WebglUtils } from "./webgl-utils";
@@ -51,16 +51,16 @@ export class RendererGpu implements Renderer
 
 
             // standard
-            gl.useProgram(program);
-            directionalLight.render(sun, program);
-            perspectiveCamera.render(null, program);
-            cubeRenderer.renderCubes(cubes, program);
+            // gl.useProgram(program);
+            // directionalLight.render(sun, program);
+            // perspectiveCamera.render(null, program);
+            // cubeRenderer.renderCubes(cubes, program);
 
             // depth
-            // gl.useProgram(depthProgram);
-            // directionalLight.render(sun, depthProgram);
-            // ortographicCamera.render(null, depthProgram);
-            // cubeRenderer.renderCubes(cubes, depthProgram);
+            gl.useProgram(depthProgram);
+            directionalLight.render(sun, depthProgram);
+            ortographicCamera.render(null, depthProgram);
+            cubeRenderer.renderCubes(cubes, depthProgram);
 
         }
     }

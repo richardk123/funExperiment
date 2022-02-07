@@ -31,7 +31,7 @@ class Application
             for (let y = 0; y < size; y++)
             {
                 const entity = new Entity();
-                entity.add(new Position((size / 2) - x, (size / 2) - y , Utils.randomBool() ? 1 : 0));
+                entity.add(new Position(-(size / 2) + x, -(size / 2) + y , Utils.randomBool() ? 1 : 0));
                 entity.add(new Color(Math.random(), Math.random() , Math.random(), 1));
                 // entity.add(new Rotation(Math.PI * Math.random(), Math.PI  * Math.random() , Math.PI  * Math.random()));
                 entity.add(EntityTags.CUBE);

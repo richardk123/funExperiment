@@ -5,10 +5,10 @@ export class WebglUtils
         console.log("loading shaders");
         
         // vertex and fragment shaders
-        var vertexShader = this.compileShader(gl.VERTEX_SHADER , vertexShaderFile, gl);
-        var fragmentShader = this.compileShader(gl.FRAGMENT_SHADER ,fragmentShaderFile, gl);
+        const vertexShader = this.compileShader(gl.VERTEX_SHADER , vertexShaderFile, gl);
+        const fragmentShader = this.compileShader(gl.FRAGMENT_SHADER ,fragmentShaderFile, gl);
 
-        var program = gl.createProgram();
+        const program = gl.createProgram();
         gl.attachShader(program, vertexShader);
         gl.attachShader(program, fragmentShader);
         gl.linkProgram(program);
@@ -32,14 +32,14 @@ export class WebglUtils
         return program;
     }
 
-    private static compileShader(shaderType: GLenum, shaderSource: string, webgl: WebGLRenderingContext): WebGLShader
+    private static compileShader(shaderType: GLenum, shaderSource: string, gl: WebGLRenderingContext): WebGLShader
     {
-        var shader = webgl.createShader(shaderType);
-        webgl.shaderSource(shader, shaderSource);
-        webgl.compileShader(shader);
+        const shader = gl.createShader(shaderType);
+        gl.shaderSource(shader, shaderSource);
+        gl.compileShader(shader);
 
-        if (!webgl.getShaderParameter(shader, webgl.COMPILE_STATUS)) {
-            throw "Shader compile failed with: " + webgl.getShaderInfoLog(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            throw "Shader compile failed with: " + gl.getShaderInfoLog(shader);
         }
 
         return shader;
@@ -47,8 +47,8 @@ export class WebglUtils
 
     
     // Utility to complain loudly if we fail to find the uniform
-    public static getUniformLocation(program, name, webgl: WebGLRenderingContext): WebGLUniformLocation {
-        var uniformLocation = webgl.getUniformLocation(program, name);
+    public static getUniformLocation(program, name, gl: WebGLRenderingContext): WebGLUniformLocation {
+        var uniformLocation = gl.getUniformLocation(program, name);
         if (uniformLocation === -1) {
             throw 'Can not find uniform ' + name + '.';
         }
@@ -56,8 +56,8 @@ export class WebglUtils
     }
 
     // Utility to complain loudly if we fail to find the attribute
-    public static getAttribLocation(program, name, webgl: WebGLRenderingContext) {
-        var attributeLocation = webgl.getAttribLocation(program, name);
+    public static getAttribLocation(program, name, gl: WebGLRenderingContext) {
+        var attributeLocation = gl.getAttribLocation(program, name);
         if (attributeLocation === -1) {
             throw 'Can not find attribute ' + name + '.';
         }

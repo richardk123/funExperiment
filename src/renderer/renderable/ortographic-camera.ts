@@ -4,9 +4,9 @@ import * as GLM from 'gl-matrix';
 
 export class OrtographicCamera
 {
+    ORTO_SIZE = 21;
 
-
-    ORTO_SIZE = 100;
+    readonly render: (camera: Entity, program: WebGLProgram) => void;
 
     constructor(gl: WebGL2RenderingContext)
     {
@@ -14,20 +14,25 @@ export class OrtographicCamera
         this.render = (camera, program) =>
         {
             // uniforms
-            const modelViewMatrixUniformLocation = WebglUtils.getUniformLocation(program, 'modelViewMatrix', gl);
-            const projectionMatrixUniformLocation = WebglUtils.getUniformLocation(program, 'projectionMatrix', gl);
+            const matViewUniformLocation = WebglUtils.getUniformLocation(program, 'mView', gl);
+            const matProjUniformLocation = WebglUtils.getUniformLocation(program, 'mProj', gl);
 
-            var modelViewMatrix = new Float32Array(16);
-            GLM.mat4.lookAt(modelViewMatrix, [0, 0, -20], [0, 0, 0], [0, 1, 0]);
-            gl.uniformMatrix4fv(modelViewMatrixUniformLocation, false, modelViewMatrix);
+            const viewMatrix = new Float32Array(16);
+            GLM.mat4.lookAt(viewMatrix, [0, 0, -10], [0, 0, 0], [0, 1, 0]);
+            gl.uniformMatrix4fv(matViewUniformLocation, false, viewMatrix);
 
-            var projectionMatrix = new Float32Array(16);
-            GLM.mat4.ortho(projectionMatrix, this.ORTO_SIZE, this.ORTO_SIZE, this.ORTO_SIZE, this.ORTO_SIZE, 0.1, 1000);
-            gl.uniformMatrix4fv(projectionMatrixUniformLocation, false, projectionMatrix);
+            const projMatrix = new Float32Array(16);
+            const aspectRation = gl.canvas.clientWidth / gl.canvas.clientHeight;
+
+            var left = -10 * aspectRation;
+            var right = 10 * aspectRation;
+            var bottom = 10 * aspectRation;
+            var top = -10 * aspectRation;
+            var near = 100;
+            var far = -100;
+            GLM.mat4.ortho(projMatrix, left, right, bottom, top, near, far);
+            gl.uniformMatrix4fv(matProjUniformLocation, false, projMatrix);
+
         }
-    }
-
-    public render(camera: Entity, program: WebGLProgram)
-    {
     }
 }

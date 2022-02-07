@@ -1,10 +1,19 @@
 precision mediump float;
 
 attribute vec3 vertPosition;
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
+attribute vec4 color;
+attribute mat4 mWorld;
+attribute vec3 vertNormal;
 
-void main() 
+uniform mat4 mView;
+uniform mat4 mProj;
+
+varying vec4 v_color;
+varying vec3 v_normal;
+
+void main()
 {
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(vertPosition, 1.0);
+    v_color = color;
+    v_normal = (mWorld * vec4(vertNormal, 0.0)).xyz;
+    gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
 }
