@@ -4,6 +4,8 @@ import * as GLM from 'gl-matrix';
 
 export class PespectiveCamera
 {
+    readonly render: (camera: Entity, program: WebGLProgram) => void;
+
     constructor(gl: WebGL2RenderingContext)
     {
         //TODO: parametrize from camera
@@ -26,7 +28,4 @@ export class PespectiveCamera
         }
     }
 
-    public render(camera: Entity, program: WebGLProgram)
-    {
-    }
 }

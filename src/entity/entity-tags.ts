@@ -1,5 +1,7 @@
-export class EntityTags
+export enum EntityTags
 {
-    static SUN = 0;
-    static CUBE = 1;
+    SUN,
+    CUBE,
+    CAMERA_PERSPECTIVE,
+    CAMERA_ORTOGRAPHIC,
 }

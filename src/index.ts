@@ -41,7 +41,6 @@ class Application
 
         const renderer = new RendererGpu();
         const rendererSystem = new RendererSystem(renderer);
-
         const dayNightSystem = new DayNightSystem();
 
         engine.addSystem(rendererSystem);
@@ -52,7 +51,7 @@ class Application
 
     private mainLoop(engine: Engine, deltaTime: number)
     {
-        document.getElementById("fps").textContent = (1000 / deltaTime).toFixed(2).toString();
+        document.getElementById("fps").textContent = (1000 / deltaTime).toFixed(0).toString();
         
         const prev = performance.now();
         engine.update(deltaTime);

@@ -1,14 +1,5 @@
-import * as GLM from 'gl-matrix'
+import { V3 } from './base/v3';
 
-export class Position 
+export class Position extends V3
 {
-    public position = new Float32Array(3);
-
-    constructor(x: number, y: number, z: number)
-    {
-        this.position[0] = x;
-        this.position[1] = y;
-        this.position[2] = z;
-    }
-
 }

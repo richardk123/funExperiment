@@ -6,6 +6,8 @@ import { WebglUtils } from "../webgl-utils";
 
 export class DirectionalLight
 {
+    readonly render: (sun: Entity, program: WebGLProgram) => void;
+
     constructor(gl: WebGL2RenderingContext)
     {
         this.render = (sun, program) =>
@@ -23,9 +25,5 @@ export class DirectionalLight
             gl.uniform3f(sunlightIntensityUniformLocation, sunlightIntensity.x, sunlightIntensity.y, sunlightIntensity.z);
             gl.uniform3f(sunlightDirectionLocation, sunLightDirection.x, sunLightDirection.y, sunLightDirection.z);
         }
-    }
-
-    public render(sun: Entity, program: WebGLProgram)
-    {
     }
 }

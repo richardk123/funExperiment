@@ -7,6 +7,8 @@ import { Color } from "../../component/color";
 
 export class CubeRenderer
 {
+    readonly render: (cubes: ReadonlyArray<Entity>, program: WebGLProgram) => void;
+
     constructor(gl: WebGL2RenderingContext, maxNumberOfInstances: number)
     {
         // color data
@@ -36,7 +38,7 @@ export class CubeRenderer
         gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, matrixData.byteLength, gl.DYNAMIC_DRAW);
 
-        this.renderCubes = (cubes, program) =>
+        this.render = (cubes, program) =>
         {
             const positionAttribLocation = WebglUtils.getAttribLocation(program, 'vertPosition', gl);
             const colorAttribLocation = WebglUtils.getAttribLocation(program, 'color', gl);
@@ -65,7 +67,7 @@ export class CubeRenderer
                 const worldMatrix = new Float32Array(matrixData.buffer, byteOffsetToMatrix, 16);
                 const positionComponent = cubes[i].get(Position);
     
-                GLM.mat4.fromTranslation(worldMatrix, positionComponent.position);
+                GLM.mat4.fromTranslation(worldMatrix, positionComponent.asArray);
     
                 // const rotation = cubes[i].get(Rotation);
                 // if (rotation)
@@ -82,7 +84,7 @@ export class CubeRenderer
     
                 const colorComponent = cubes[i].get(Color);
                 const offset = i * 4;
-                colorData.set(colorComponent.color, offset);
+                colorData.set(colorComponent.asArray, offset);
             }
     
     
@@ -111,9 +113,5 @@ export class CubeRenderer
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
             gl.bindBuffer(gl.ARRAY_BUFFER, null);
         }
-    }
-
-    public renderCubes(cubes: ReadonlyArray<Entity>, program: WebGLProgram): void
-    {
     }
 }

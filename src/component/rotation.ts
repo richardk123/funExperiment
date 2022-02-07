@@ -1,7 +1,5 @@
-export class Rotation
-{
-    constructor(public x: number, public y: number, public z: number)
-    {
+import { V3 } from "./base/v3";
 
-    }
+export class Rotation extends V3
+{
 }

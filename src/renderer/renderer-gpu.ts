@@ -60,7 +60,7 @@ export class RendererGpu implements Renderer
             gl.useProgram(depthProgram);
             directionalLight.render(sun, depthProgram);
             ortographicCamera.render(null, depthProgram);
-            cubeRenderer.renderCubes(cubes, depthProgram);
+            cubeRenderer.render(cubes, depthProgram);
 
         }
     }

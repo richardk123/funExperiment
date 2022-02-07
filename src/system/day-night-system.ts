@@ -40,8 +40,8 @@ export class DayNightSystem extends System
         const sun = sunQuery.first;
         const directionComponent = sun.get(Direction);
 
-        directionComponent.direction[0] = lightPosition[0];
-        directionComponent.direction[1] = lightPosition[1];
-        directionComponent.direction[2] = lightPosition[2];
+        directionComponent.x = lightPosition[0];
+        directionComponent.y = lightPosition[1];
+        directionComponent.z = lightPosition[2];
     }
 }
