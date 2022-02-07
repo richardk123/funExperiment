@@ -12,9 +12,10 @@ import {DayNightSystem} from "./system/day-night-system";
 import { EyePosition } from "./component/camera/eye-pos";
 import { LookAt } from "./component/camera/look-at";
 import { QueryHolder } from "./query-holder";
+import { DebugSystem } from "./system/debug-system";
 
 
-class Application
+export class Application
 {
     constructor()
     {
@@ -30,7 +31,7 @@ class Application
         engine.addEntity(sun);
         
         const perspectiveCamera = new Entity()
-            .add(new EyePosition(0, -20, 0))
+            .add(new EyePosition(0, 0, -20))
             .add(new LookAt(0, 0, 0))
             .add(EntityTags.CAMERA_PERSPECTIVE);
         
@@ -53,16 +54,18 @@ class Application
         const renderer = new RendererGpu();
         const rendererSystem = new RendererSystem(renderer);
         const dayNightSystem = new DayNightSystem();
+        const debugSystem = new DebugSystem();
 
         engine.addSystem(rendererSystem);
         engine.addSystem(dayNightSystem);
+        engine.addSystem(debugSystem);
 
         this.mainLoop(engine, 0);
     }
 
     private mainLoop(engine: Engine, deltaTime: number)
     {
-        document.getElementById("fps").textContent = (1000 / deltaTime).toFixed(0).toString();
+        // document.getElementById("fps").textContent = (1000 / deltaTime).toFixed(0).toString();
         
         const prev = performance.now();
         engine.update(deltaTime);
@@ -71,5 +74,3 @@ class Application
         requestAnimationFrame(() => this.mainLoop(engine, dtime));
     }
 }
-
-new Application();

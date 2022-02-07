@@ -1,6 +1,8 @@
 import { Entity } from "tick-knock";
 import { WebglUtils } from "../webgl-utils";
 import * as GLM from 'gl-matrix';
+import { EyePosition } from "../../component/camera/eye-pos";
+import { LookAt } from "../../component/camera/look-at";
 
 export class PespectiveCamera
 {
@@ -11,13 +13,16 @@ export class PespectiveCamera
         //TODO: parametrize from camera
         this.render = (camera, program) =>
         {
+            const eye = camera.get(EyePosition);
+            const lookAt = camera.get(LookAt);
+
             // uniforms
             const matViewUniformLocation = WebglUtils.getUniformLocation(program, 'mView', gl);
             const matProjUniformLocation = WebglUtils.getUniformLocation(program, 'mProj', gl);
 
             // view matrix
             const viewMatrix = new Float32Array(16);
-            GLM.mat4.lookAt(viewMatrix, [0, 0, -20], [0, 0, 0], [0, 1, 0]);
+            GLM.mat4.lookAt(viewMatrix, [eye.x, eye.y, eye.z], [lookAt.x, lookAt.y, lookAt.z], [0, 1, 0]);
             gl.uniformMatrix4fv(matViewUniformLocation, false, viewMatrix);
             
             // projection matrix (prevede na -1 to 1 souradnice pro gpu)

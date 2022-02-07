@@ -7,10 +7,9 @@
     "noImplicitAny": false,
     "sourceMap": true,
     "preserveConstEnums":true,
-    "lib": [
-        "dom",
-        "es6"
-    ],
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["dom", "es6"],
     "rootDir": "src",
   }
 }
