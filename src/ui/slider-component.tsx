@@ -15,6 +15,7 @@ export class SliderComponent extends React.Component<SliderProps>
             <div>
                 <span>{this.props.title}</span>
                 <input type="range" min={this.props.min} max={this.props.max} value={this.props.getVal()} onChange={this.handleChangeEvent}/>
+                <span>{this.props.getVal()}</span>
             </div>
         );
     }
@@ -27,7 +28,7 @@ export class SliderComponent extends React.Component<SliderProps>
     }
 }
 
-export interface SliderProps
+interface SliderProps
 {
     getVal: () => number;
     setVal: (val: number) => void;

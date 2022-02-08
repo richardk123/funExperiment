@@ -17,7 +17,7 @@ export class V3Component extends React.Component<V3Props>
     }
 }
 
-export interface V3Props
+interface V3Props
 {
     title: string;
     v3: V3;

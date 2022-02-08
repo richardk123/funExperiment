@@ -65,8 +65,6 @@ export class Application
 
     private mainLoop(engine: Engine, deltaTime: number)
     {
-        // document.getElementById("fps").textContent = (1000 / deltaTime).toFixed(0).toString();
-        
         const prev = performance.now();
         engine.update(deltaTime);
         const dtime = performance.now() - prev;
