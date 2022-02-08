@@ -65,6 +65,8 @@ export class Skybox
 
         this.render = (camera, program) =>
         {
+            gl.useProgram(program);
+            
             const eye = camera.get(EyePosition);
             const lookAt = camera.get(LookAtPosition);
 
@@ -74,7 +76,7 @@ export class Skybox
 
             // position
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, Shape.quad, gl.STATIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, Shape.quadSkybox, gl.STATIC_DRAW);
             
             gl.enableVertexAttribArray(positionAttribLocation);
             gl.vertexAttribPointer(positionAttribLocation, 2, gl.FLOAT, false, 0, 0);

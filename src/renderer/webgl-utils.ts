@@ -1,8 +1,8 @@
 export class WebglUtils
 {
-    static createShaderProgram(gl: WebGL2RenderingContext, vertexShaderFile: string, fragmentShaderFile: string): WebGLProgram
+    static createShaderProgram(gl: WebGL2RenderingContext, vertexShaderFile: string, fragmentShaderFile: string, name: string): WebGLProgram
     {
-        console.log("loading shaders");
+        console.log("loading shaders " + name);
         
         // vertex and fragment shaders
         const vertexShader = this.compileShader(gl.VERTEX_SHADER , vertexShaderFile, gl);

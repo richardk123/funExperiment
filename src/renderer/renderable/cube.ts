@@ -42,6 +42,8 @@ export class Cube
 
         this.render = (cubes, program) =>
         {
+            gl.useProgram(program);
+            
             const positionAttribLocation = WebglUtils.getAttribLocation(program, 'vertPosition', gl);
             const colorAttribLocation = WebglUtils.getAttribLocation(program, 'color', gl);
             const normalAttribLocation = WebglUtils.getAttribLocation(program, 'vertNormal', gl);

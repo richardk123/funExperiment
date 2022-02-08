@@ -103,13 +103,21 @@ export class Shape
         22, 20, 23
     ]);
 
-	static quad = new Float32Array(
-	[
+	static quadSkybox = new Float32Array([
 		-1, -1, 
 		1, -1, 
 		-1,  1, 
 		-1,  1,
 		1, -1,
 		1,  1,
+	]);
+
+	static quad = new Float32Array([
+		0.5, 0.5, 
+		0.5, -0.5, 
+		-0.5, -0.5,
+		0.5, 0.5, 
+		-0.5, -0.5, 
+		-0.5, 0.5,
 	]);
 }

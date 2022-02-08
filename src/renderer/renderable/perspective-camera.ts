@@ -12,9 +12,10 @@ export class PespectiveCamera
 
     constructor(gl: WebGL2RenderingContext)
     {
-        //TODO: parametrize from camera
         this.render = (camera, program) =>
         {
+            gl.useProgram(program);
+
             const eye = camera.get(EyePosition);
             const lookAt = camera.get(LookAtPosition);
 

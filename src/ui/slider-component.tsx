@@ -24,7 +24,6 @@ export class SliderComponent extends React.Component<SliderProps>
     {
         const element = (e.target as HTMLInputElement);
         const value = element.valueAsNumber;
-        console.log(value);
         this.props.setVal(value);
         this.setState({value: value});
     }

@@ -12,6 +12,7 @@ export class DirectionalLight
     {
         this.render = (sun, program) =>
         {
+            gl.useProgram(program);
             // lighting
             const ambientLightIntensity = sun.get(AmbientLightIntensity);
             const sunlightIntensity = sun.get(SunlightIntensity);
