@@ -2,10 +2,9 @@ import {Entity, Query, System} from "tick-knock";
 import {EntityTags} from "../entity/entity-tags";
 import {Direction} from "../component/direction";
 import * as GLM from "gl-matrix";
-
-const sunQuery = new Query((entity: Entity) => {
-    return entity.has(EntityTags.SUN);
-});
+import { AmbientLightIntensity } from "../component/light/abmient-light-intensity";
+import { SunlightIntensity } from "../component/light/sun-light-intensity";
+import { QueryHolder } from "../query-holder";
 
 export class DayNightSystem extends System
 {
@@ -18,12 +17,14 @@ export class DayNightSystem extends System
 
     public onAddedToEngine(): void
     {
-        this.engine.addQuery(sunQuery);
-    }
 
-    public onRemovedFromEngine(): void
-    {
-        this.engine.removeQuery(sunQuery);
+        const sun = new Entity()
+            .add(new AmbientLightIntensity(0.0, 0.0, 0.0))
+            .add(new SunlightIntensity(0.4, 0.4, 0.4))
+            .add(new Direction(10.0, 10.0, 2.0))
+            .add(EntityTags.SUN);
+    
+        this.engine.addEntity(sun);
     }
 
     public update(dt: number): void
@@ -37,7 +38,7 @@ export class DayNightSystem extends System
         GLM.quat.setAxisAngle(quat, axis, this.angle);
         GLM.vec3.transformQuat(lightPosition, lightPosition, quat);
 
-        const sun = sunQuery.first;
+        const sun = QueryHolder.sunQuery.first;
         const directionComponent = sun.get(Direction);
 
         directionComponent.x = lightPosition[0];

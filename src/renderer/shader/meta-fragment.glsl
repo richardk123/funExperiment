@@ -5,6 +5,7 @@ uniform mat4 mProj;
 uniform mat4 mWorld;
 uniform vec3 camPos;
 uniform vec3 camLookAt;
+uniform vec3 sunlightDirection;
 varying vec2 v_uv;
 
 float smin( float a, float b, float k )
@@ -26,12 +27,12 @@ float createBox(vec3 p, vec3 b)
 
 float calcDistance(vec3 p)
 {
-    vec4 cube1Pos = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(0.4, 0.0, 0.0, 1.0));
-    vec4 cube2Pos  = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(-0.4, 0.0, 0.0, 1.0));
+    vec4 cube1Pos = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(1.0, 0.0, 0.0, 1.0));
+    vec4 cube2Pos  = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(-1.0, 0.0, 0.0, 1.0));
 
     return smin(
-        createBox(cube1Pos.xyz, vec3(0.2)),
-        createBox(cube2Pos.xyz, vec3(0.2)),
+        createSphere(cube1Pos.xyz, 0.6),
+        createSphere(cube2Pos.xyz, 0.6),
         0.2);
 }
 
@@ -50,7 +51,7 @@ void main()
     vec2 resolution = vec2(1024.0 / 768.0, 1.0);
 
     vec3 cameraPos = (mProj * mView * mWorld * vec4(camPos, 1.0)).xyz;
-    vec3 lightDirection = vec3(1.0);
+    vec3 lightDirection = normalize(sunlightDirection);
     vec3 uvNormal = normalize(vec3((v_uv - vec2(0.5)) * resolution, -1));
     vec3 rayDirection = uvNormal;
 

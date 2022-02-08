@@ -67,7 +67,10 @@ export class RendererOpengl implements Renderer
             skybox.render(cameraPerspective, skyboxProgram);
             directionalLight.render(sun, program);
             perspectiveCamera.render(cameraPerspective, program);
-            // cubeRenderer.render(cubes, program);
+            cubeRenderer.render(cubes, program);
+            
+            // meta
+            directionalLight.render(sun, metaProgram);
             snake.render(cameraPerspective, metaProgram);
 
             // depth

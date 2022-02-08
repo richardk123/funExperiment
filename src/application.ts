@@ -20,14 +20,6 @@ export class Application
         const engine = new Engine();
         QueryHolder.addQueries(engine);
 
-        const sun = new Entity()
-            .add(new AmbientLightIntensity(0.0, 0.0, 0.0))
-            .add(new SunlightIntensity(0.4, 0.4, 0.4))
-            .add(new Direction(10.0, 10.0, 2.0))
-            .add(EntityTags.SUN);
-        
-        engine.addEntity(sun);
-        
         const perspectiveCamera = new Entity()
             .add(new EyePosition(0, 0, -20))
             .add(new LookAtPosition(0, 0, 0))
@@ -38,12 +30,12 @@ export class Application
 
         const renderer = new RendererOpengl();
         const rendererSystem = new RendererSystem(renderer);
-        // const dayNightSystem = new DayNightSystem();
+        const dayNightSystem = new DayNightSystem();
         const debugSystem = new DebugSystem();
         const mapSystem = new MapSystem();
 
         engine.addSystem(rendererSystem);
-        // engine.addSystem(dayNightSystem);
+        engine.addSystem(dayNightSystem);
         engine.addSystem(debugSystem);
         engine.addSystem(mapSystem)
 
