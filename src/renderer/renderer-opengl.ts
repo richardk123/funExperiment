@@ -1,22 +1,24 @@
 import { Renderer} from "./renderer";
-import * as GLM from 'gl-matrix';
 import vertexShaderFile from '!!raw-loader!./shader/vertex.glsl';
 import fragmentShaderFile from '!!raw-loader!./shader/fragment.glsl';
 import depthVertexShaderFile from '!!raw-loader!./shader/depth-vertex.glsl';
 import depthFragmentShaderFile from '!!raw-loader!./shader/depth-fragment.glsl';
+import skyboxVertexShaderFile from '!!raw-loader!./shader/skybox-vertex.glsl';
+import skyboxFragmentShaderFile from '!!raw-loader!./shader/skybox-fragment.glsl';
 
 import { Entity } from "tick-knock";
 import { WebglUtils } from "./webgl-utils";
 import { PespectiveCamera } from "./renderable/perspective-camera";
-import { CubeRenderer } from "./renderable/cube-renderer";
+import { Cube } from "./renderable/cube";
 import { DirectionalLight } from "./renderable/directional-light";
 import { OrtographicCamera } from "./renderable/ortographic-camera";
+import { Skybox } from "./renderable/skybox";
 
 export class RendererOpengl implements Renderer
 {
     renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity) => void;
 
-    static MAX_NUMBER_OF_INSTANCES = Math.pow(100, 2);
+    static MAX_NUMBER_OF_BOX_INSTANCES = Math.pow(100, 2);
     static SHADOW_MAP_SIZE = 2048;
 
     constructor()
@@ -25,12 +27,14 @@ export class RendererOpengl implements Renderer
         var gl = canvas.getContext('webgl2');
         
         const program = WebglUtils.createShaderProgram(gl, vertexShaderFile, fragmentShaderFile);
+        const depthProgram = WebglUtils.createShaderProgram(gl, depthVertexShaderFile, depthFragmentShaderFile);
+        const skyboxProgram = WebglUtils.createShaderProgram(gl, skyboxVertexShaderFile, skyboxFragmentShaderFile);
         
-        const cubeRenderer = new CubeRenderer(gl, RendererOpengl.MAX_NUMBER_OF_INSTANCES);
+        const skybox = new Skybox(gl);
+        const cubeRenderer = new Cube(gl, RendererOpengl.MAX_NUMBER_OF_BOX_INSTANCES);
         const directionalLight = new DirectionalLight(gl);
         const perspectiveCamera = new PespectiveCamera(gl);
         
-        const depthProgram = WebglUtils.createShaderProgram(gl, depthVertexShaderFile, depthFragmentShaderFile);
         const ortographicCamera = new OrtographicCamera(gl);
 
         this.renderFunc = (cubes, sun, cameraPerspective) =>
@@ -50,6 +54,9 @@ export class RendererOpengl implements Renderer
 
 
             // standard
+            gl.useProgram(skyboxProgram);
+            skybox.render(cameraPerspective, skyboxProgram);
+            
             gl.useProgram(program);
             directionalLight.render(sun, program);
             perspectiveCamera.render(cameraPerspective, program);

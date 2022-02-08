@@ -1,16 +1,13 @@
 import { Engine, Entity } from "tick-knock";
-import { Color } from "./component/color";
 import { Direction } from "./component/direction";
 import { AmbientLightIntensity } from "./component/light/abmient-light-intensity";
 import { SunlightIntensity } from "./component/light/sun-light-intensity";
-import { Position } from "./component/position";
 import { EntityTags } from "./entity/entity-tags";
 import {RendererOpengl} from "./renderer/renderer-opengl";
 import { RendererSystem } from "./system/renderer-system";
-import { Utils } from "./utils";
 import {DayNightSystem} from "./system/day-night-system";
 import { EyePosition } from "./component/camera/eye-pos";
-import { LookAt } from "./component/camera/look-at";
+import { LookAtPosition } from "./component/camera/look-at";
 import { QueryHolder } from "./query-holder";
 import { DebugSystem } from "./system/debug-system";
 import { MapSystem } from "./system/map-system";
@@ -33,7 +30,7 @@ export class Application
         
         const perspectiveCamera = new Entity()
             .add(new EyePosition(0, 0, -20))
-            .add(new LookAt(0, 0, 0))
+            .add(new LookAtPosition(0, 0, 0))
             .add(EntityTags.CAMERA_PERSPECTIVE);
         
         engine.addEntity(perspectiveCamera);
@@ -41,12 +38,12 @@ export class Application
 
         const renderer = new RendererOpengl();
         const rendererSystem = new RendererSystem(renderer);
-        const dayNightSystem = new DayNightSystem();
+        // const dayNightSystem = new DayNightSystem();
         const debugSystem = new DebugSystem();
         const mapSystem = new MapSystem();
 
         engine.addSystem(rendererSystem);
-        engine.addSystem(dayNightSystem);
+        // engine.addSystem(dayNightSystem);
         engine.addSystem(debugSystem);
         engine.addSystem(mapSystem)
 

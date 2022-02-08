@@ -102,4 +102,14 @@ export class Shape
         21, 20, 22,
         22, 20, 23
     ]);
+
+	static quad = new Float32Array(
+	[
+		-1, -1, 
+		1, -1, 
+		-1,  1, 
+		-1,  1,
+		1, -1,
+		1,  1,
+	]);
 }

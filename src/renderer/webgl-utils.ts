@@ -47,7 +47,8 @@ export class WebglUtils
 
     
     // Utility to complain loudly if we fail to find the uniform
-    public static getUniformLocation(program, name, gl: WebGLRenderingContext): WebGLUniformLocation {
+    public static getUniformLocation(program: WebGLProgram, name: string, gl: WebGLRenderingContext): WebGLUniformLocation 
+    {
         var uniformLocation = gl.getUniformLocation(program, name);
         if (uniformLocation === -1) {
             throw 'Can not find uniform ' + name + '.';
@@ -56,7 +57,8 @@ export class WebglUtils
     }
 
     // Utility to complain loudly if we fail to find the attribute
-    public static getAttribLocation(program, name, gl: WebGLRenderingContext) {
+    public static getAttribLocation(program: WebGLProgram, name: string, gl: WebGLRenderingContext) 
+    {
         var attributeLocation = gl.getAttribLocation(program, name);
         if (attributeLocation === -1) {
             throw 'Can not find attribute ' + name + '.';

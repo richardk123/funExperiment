@@ -7,7 +7,7 @@ import { Color } from "../../component/color";
 import { Scale } from "../../component/scale";
 import { Rotation } from "../../component/rotation";
 
-export class CubeRenderer
+export class Cube
 {
     readonly render: (cubes: ReadonlyArray<Entity>, program: WebGLProgram) => void;
 
@@ -83,7 +83,6 @@ export class CubeRenderer
                 const offset = i * 4;
                 colorData.set(colorComponent.asArray, offset);
             }
-    
     
             // world matrix
             gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer);

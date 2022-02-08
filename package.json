@@ -20,6 +20,7 @@
   },
   "homepage": "https://richardk123.github.io/funExperiment/",
   "devDependencies": {
+    "file-loader": "^6.2.0",
     "gh-pages": "^3.2.3",
     "gl-matrix": "^3.4.3",
     "glslify-loader": "^2.0.0",

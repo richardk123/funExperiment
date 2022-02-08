@@ -15,7 +15,7 @@ export class SliderComponent extends React.Component<SliderProps>
             <div>
                 <span>{this.props.title}</span>
                 <input type="range" min={this.props.min} max={this.props.max} value={this.props.getVal()} onChange={this.handleChangeEvent}/>
-                <span>{this.props.getVal()}</span>
+                <div style={{color: 'blue', width: '50px', float: 'right'}}>{this.props.getVal()}</div>
             </div>
         );
     }
@@ -23,8 +23,10 @@ export class SliderComponent extends React.Component<SliderProps>
     handleChangeEvent(e: React.FormEvent<HTMLInputElement>): void
     {
         const element = (e.target as HTMLInputElement);
-        this.props.setVal(element.valueAsNumber);
-        this.setState({value: element.valueAsNumber});
+        const value = element.valueAsNumber;
+        console.log(value);
+        this.props.setVal(value);
+        this.setState({value: value});
     }
 }
 
