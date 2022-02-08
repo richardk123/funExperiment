@@ -1,5 +1,10 @@
 precision mediump float;
 
+uniform mat4 mView;
+uniform mat4 mProj;
+uniform mat4 mWorld;
+uniform vec3 camPos;
+uniform vec3 camLookAt;
 varying vec2 v_uv;
 
 float smin( float a, float b, float k )
@@ -21,9 +26,13 @@ float createBox(vec3 p, vec3 b)
 
 float calcDistance(vec3 p)
 {
-    float distanceFromBox = createBox(p, vec3(0.3));
-    float distanceFromSphere = createSphere(p, 0.4);
-    return smin(distanceFromBox, distanceFromSphere, 0.2);
+    vec4 cube1Pos = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(0.4, 0.0, 0.0, 1.0));
+    vec4 cube2Pos  = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(-0.4, 0.0, 0.0, 1.0));
+
+    return smin(
+        createBox(cube1Pos.xyz, vec3(0.2)),
+        createBox(cube2Pos.xyz, vec3(0.2)),
+        0.2);
 }
 
 vec3 calcNormal(vec3 p) // for function f(p)
@@ -40,17 +49,18 @@ void main()
 {
     vec2 resolution = vec2(1024.0 / 768.0, 1.0);
 
-    vec3 camPos = vec3(0.0, 0.0, 2.0);
+    vec3 cameraPos = (mProj * mView * mWorld * vec4(camPos, 1.0)).xyz;
     vec3 lightDirection = vec3(1.0);
-    vec3 rayDirection = normalize(vec3((v_uv - vec2(0.5)) * resolution, -1));
+    vec3 uvNormal = normalize(vec3((v_uv - vec2(0.5)) * resolution, -1));
+    vec3 rayDirection = uvNormal;
 
-    vec3 rayPos = camPos;
+    vec3 rayPos = cameraPos;
     float distance = 0.0;
-    float distanceMax = 5.0;
+    float distanceMax = 1000.0;
 
     for (int i = 0; i < 256; i++)
     {
-        vec3 pos = camPos + distance * rayDirection;
+        vec3 pos = cameraPos + distance * rayDirection;
         float currentDistance = calcDistance(pos);
 
         distance += currentDistance;
@@ -65,7 +75,7 @@ void main()
 
     if (distance < distanceMax)
     {
-        vec3 finalPosition = camPos + distance * rayDirection;
+        vec3 finalPosition = cameraPos + distance * rayDirection;
         vec3 normal = calcNormal(finalPosition);
         color = vec4(1.0);
 

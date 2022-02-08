@@ -25,6 +25,8 @@ export class Snake
             const projMatrixLocation = WebglUtils.getUniformLocation(program, 'mProj', gl);
             const viewMatrixLocation = WebglUtils.getUniformLocation(program, 'mView', gl);
             const worldMatrixLocation = WebglUtils.getUniformLocation(program, 'mWorld', gl);
+            const camPosLocation = WebglUtils.getUniformLocation(program, 'camPos', gl);
+            const camLookAtLocation = WebglUtils.getUniformLocation(program, 'camLookAt', gl);
 
             // position
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -45,15 +47,17 @@ export class Snake
 
             const worldMatrix = new Float32Array(16);
             GLM.mat4.identity(worldMatrix);
-            GLM.mat4.translate(worldMatrix, worldMatrix, [0, 0, -10]);
+            GLM.mat4.translate(worldMatrix, worldMatrix, [0, 0, 0]);
             GLM.mat4.rotateX(worldMatrix, worldMatrix, 0);
             GLM.mat4.rotateY(worldMatrix, worldMatrix, 0);
             GLM.mat4.rotateZ(worldMatrix, worldMatrix, 0);
-            GLM.mat4.scale(worldMatrix, worldMatrix, [10, 10, 0]);
+            GLM.mat4.scale(worldMatrix, worldMatrix, [1, 1, 1]);
 
             gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
             gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
             gl.uniformMatrix4fv(worldMatrixLocation, false, worldMatrix);
+            gl.uniform3fv(camPosLocation, eye.asArray);
+            gl.uniform3fv(camLookAtLocation, lookAt.asArray);
 
             gl.drawArrays(gl.TRIANGLES, 0, 6);
         }

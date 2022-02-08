@@ -54,20 +54,20 @@ export class RendererOpengl implements Renderer
             gl.frontFace(gl.CCW);
             gl.cullFace(gl.BACK);
             gl.enable(gl.BLEND);
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+            // Tell WebGL how to convert from clip space to pixels
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
             // clear buffers and colors
             gl.clearColor(0.1, 0, 0, 1.0);
             gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-            // Tell WebGL how to convert from clip space to pixels
-            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
             // standard
             skybox.render(cameraPerspective, skyboxProgram);
             directionalLight.render(sun, program);
             perspectiveCamera.render(cameraPerspective, program);
-            cubeRenderer.render(cubes, program);
+            // cubeRenderer.render(cubes, program);
             snake.render(cameraPerspective, metaProgram);
 
             // depth

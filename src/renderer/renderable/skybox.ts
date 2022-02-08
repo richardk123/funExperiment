@@ -26,6 +26,9 @@ export class Skybox
         var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
 
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
         // load textures
         const imageFiles = [
             {image: boxBottom, target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z },
