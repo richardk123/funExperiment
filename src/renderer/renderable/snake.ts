@@ -28,7 +28,7 @@ export class Snake
 
             // position
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, Shape.quad, gl.STATIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, Shape.quadSkybox, gl.STATIC_DRAW);
             gl.enableVertexAttribArray(positionAttribLocation);
             gl.vertexAttribPointer(positionAttribLocation, 2, gl.FLOAT, false, 0, 0);
 
@@ -45,7 +45,7 @@ export class Snake
 
             const worldMatrix = new Float32Array(16);
             GLM.mat4.identity(worldMatrix);
-            GLM.mat4.translate(worldMatrix, worldMatrix, [0, 0, -1]);
+            GLM.mat4.translate(worldMatrix, worldMatrix, [0, 0, -10]);
             GLM.mat4.rotateX(worldMatrix, worldMatrix, 0);
             GLM.mat4.rotateY(worldMatrix, worldMatrix, 0);
             GLM.mat4.rotateZ(worldMatrix, worldMatrix, 0);

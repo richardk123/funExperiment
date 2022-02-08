@@ -107,9 +107,7 @@ export class Cube
             gl.vertexAttribDivisor(colorAttribLocation, 1);
          
             gl.drawElementsInstanced(gl.TRIANGLES, Shape.cubeIndicies.length, gl.UNSIGNED_SHORT, 0, numInstances);
-    
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-            gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
         }
     }
 }
