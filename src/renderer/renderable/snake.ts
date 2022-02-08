@@ -28,7 +28,7 @@ export class Snake
 
             // position
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, Shape.quadSkybox, gl.STATIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, Shape.quad, gl.STATIC_DRAW);
             gl.enableVertexAttribArray(positionAttribLocation);
             gl.vertexAttribPointer(positionAttribLocation, 2, gl.FLOAT, false, 0, 0);
 

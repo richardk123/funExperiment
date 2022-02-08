@@ -70,7 +70,7 @@ void main()
         color = vec4(1.0);
 
         float diff = dot(lightDirection, normal);
-        color = vec4(diff);
+        color = vec4(diff, diff, diff, 1.0);
     }
 
     gl_FragColor = color;
