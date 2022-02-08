@@ -4,6 +4,8 @@ import { Shape } from "../shape";
 import { WebglUtils } from "../webgl-utils";
 import { Position } from "../../component/position";
 import { Color } from "../../component/color";
+import { Scale } from "../../component/scale";
+import { Rotation } from "../../component/rotation";
 
 export class CubeRenderer
 {
@@ -65,22 +67,17 @@ export class CubeRenderer
             {
                 const byteOffsetToMatrix = i * 16 * 4;
                 const worldMatrix = new Float32Array(matrixData.buffer, byteOffsetToMatrix, 16);
-                const positionComponent = cubes[i].get(Position);
+                
+                const position = cubes[i].get(Position);
+                const scale = cubes[i].get(Scale);
+                const rotation = cubes[i].get(Rotation);
     
-                GLM.mat4.fromTranslation(worldMatrix, positionComponent.asArray);
-    
-                // const rotation = cubes[i].get(Rotation);
-                // if (rotation)
-                // {
-                //     // //TODO: rotation
-                //     // let xRotationMatrix = new Float32Array(16);
-                //     // let yRotationMatrix = new Float32Array(16);
-                //     // let zRotationMatrix = new Float32Array(16);
-                //     // GLM.mat4.rotate(xRotationMatrix, worldMatrix, rotation.x, [1, 0, 0]);
-                //     // GLM.mat4.rotate(yRotationMatrix, worldMatrix, rotation.y, [0, 1, 0]);
-                //     // GLM.mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
-                //     // GLM.mat4.rotate(worldMatrix, worldMatrix, rotation.z, [0, 0, 1]);
-                // }
+                GLM.mat4.identity(worldMatrix);
+                GLM.mat4.translate(worldMatrix, worldMatrix, position.asArray);
+                GLM.mat4.rotateX(worldMatrix, worldMatrix, rotation.x);
+                GLM.mat4.rotateY(worldMatrix, worldMatrix, rotation.y);
+                GLM.mat4.rotateZ(worldMatrix, worldMatrix, rotation.z);
+                GLM.mat4.scale(worldMatrix, worldMatrix, scale.asArray);
     
                 const colorComponent = cubes[i].get(Color);
                 const offset = i * 4;

@@ -12,11 +12,11 @@ import { CubeRenderer } from "./renderable/cube-renderer";
 import { DirectionalLight } from "./renderable/directional-light";
 import { OrtographicCamera } from "./renderable/ortographic-camera";
 
-export class RendererGpu implements Renderer
+export class RendererOpengl implements Renderer
 {
     renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity) => void;
 
-    static MAX_NUMBER_OF_INSTANCES = Math.pow(20, 2);
+    static MAX_NUMBER_OF_INSTANCES = Math.pow(100, 2);
     static SHADOW_MAP_SIZE = 2048;
 
     constructor()
@@ -26,13 +26,12 @@ export class RendererGpu implements Renderer
         
         const program = WebglUtils.createShaderProgram(gl, vertexShaderFile, fragmentShaderFile);
         
-        const cubeRenderer = new CubeRenderer(gl, RendererGpu.MAX_NUMBER_OF_INSTANCES);
+        const cubeRenderer = new CubeRenderer(gl, RendererOpengl.MAX_NUMBER_OF_INSTANCES);
         const directionalLight = new DirectionalLight(gl);
         const perspectiveCamera = new PespectiveCamera(gl);
         
         const depthProgram = WebglUtils.createShaderProgram(gl, depthVertexShaderFile, depthFragmentShaderFile);
         const ortographicCamera = new OrtographicCamera(gl);
-
 
         this.renderFunc = (cubes, sun, cameraPerspective) =>
         {

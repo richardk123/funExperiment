@@ -1,5 +1,5 @@
-import { V3 } from "./base/v3";
+import { V4 } from "./base/v4";
 
-export class Rotation extends V3
+export class Rotation extends V4
 {
 }

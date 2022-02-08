@@ -5,7 +5,7 @@ import { AmbientLightIntensity } from "./component/light/abmient-light-intensity
 import { SunlightIntensity } from "./component/light/sun-light-intensity";
 import { Position } from "./component/position";
 import { EntityTags } from "./entity/entity-tags";
-import {RendererGpu} from "./renderer/renderer-gpu";
+import {RendererOpengl} from "./renderer/renderer-opengl";
 import { RendererSystem } from "./system/renderer-system";
 import { Utils } from "./utils";
 import {DayNightSystem} from "./system/day-night-system";
@@ -13,6 +13,7 @@ import { EyePosition } from "./component/camera/eye-pos";
 import { LookAt } from "./component/camera/look-at";
 import { QueryHolder } from "./query-holder";
 import { DebugSystem } from "./system/debug-system";
+import { MapSystem } from "./system/map-system";
 
 
 export class Application
@@ -37,28 +38,17 @@ export class Application
         
         engine.addEntity(perspectiveCamera);
         
-        const size = 20;
-        for (let x = 0; x < size; x++)
-        {
-            for (let y = 0; y < size; y++)
-            {
-                const entity = new Entity();
-                entity.add(new Position(-(size / 2) + x, -(size / 2) + y , Utils.randomBool() ? 1 : 0));
-                entity.add(new Color(Math.random(), Math.random() , Math.random(), 1));
-                // entity.add(new Rotation(Math.PI * Math.random(), Math.PI  * Math.random() , Math.PI  * Math.random()));
-                entity.add(EntityTags.CUBE);
-                engine.addEntity(entity);
-            }
-        }
 
-        const renderer = new RendererGpu();
+        const renderer = new RendererOpengl();
         const rendererSystem = new RendererSystem(renderer);
         const dayNightSystem = new DayNightSystem();
         const debugSystem = new DebugSystem();
+        const mapSystem = new MapSystem();
 
         engine.addSystem(rendererSystem);
         engine.addSystem(dayNightSystem);
         engine.addSystem(debugSystem);
+        engine.addSystem(mapSystem)
 
         this.mainLoop(engine, 0);
     }
