@@ -14,7 +14,7 @@ export class SliderComponent extends React.Component<SliderProps>
         return (
             <div>
                 <span>{this.props.title}</span>
-                <input type="range" min={this.props.min} max={this.props.max} value={this.props.getVal()} onChange={this.handleChangeEvent}/>
+                <input type="range" min={this.props.min} max={this.props.max} value={this.props.getVal()} step="0.25" onChange={this.handleChangeEvent}/>
                 <div style={{color: 'blue', width: '50px', float: 'right'}}>{this.props.getVal()}</div>
             </div>
         );

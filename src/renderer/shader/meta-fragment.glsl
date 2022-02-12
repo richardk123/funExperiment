@@ -1,5 +1,6 @@
-#define DISTANCE_MAX 1000.0
-#define DISTANCE_MIN 0.01
+#define MAX_STEPS 100
+#define MAX_DIST 100.
+#define SURF_DIST .001
 #define RESOLUTION_X 1024
 #define RESOLUTION_Y 768
 #define MAX_OBJECT_COUNT 10
@@ -20,21 +21,19 @@ varying vec2 v_uv;
 float smin(float a, float b, float k)
 {
     float h = a-b;
-    return 0.5*( (a+b) - sqrt(h*h+k) );
+    return 0.5*((a+b)-sqrt(h*h+k));
 }
 
-float sdSphere(vec3 p, vec3 spherePos, float s)
+float sdSphere(vec3 p, float s)
 {
-    vec4 cube1Pos = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(spherePos, 1.0));
-    return length(cube1Pos.xyz) - s;
+    return length(p) - s;
 }
 
-float calcDistance(vec3 p)
+float GetDist(vec3 p)
 {
     float distance = smin(
-                sdSphere(p, playerSpheres[0], 0.6),
-                sdSphere(p, playerSpheres[1], 0.6),
-                0.2);
+                sdSphere(p - playerSpheres[0], 0.3),
+                sdSphere(p - playerSpheres[1], 0.3), 0.2);
 
     for (int i = 2; i < MAX_OBJECT_COUNT; i++)
     {
@@ -42,58 +41,70 @@ float calcDistance(vec3 p)
         {
             break;
         }
-        distance = smin(distance, sdSphere(p, playerSpheres[i], 0.6), 0.2);
+        distance = smin(distance, sdSphere(p - playerSpheres[i], 0.3), 0.2);
     }
 
-    return distance;
+    // return distance;
+    float planeDist = p.y;
+    return min(planeDist, distance);
 }
 
-vec3 calcNormal(vec3 p) // for function f(p)
-{
-    const float eps = 0.001; // or some other value
-    const vec2 h = vec2(eps,0);
-    return normalize(vec3(
-        calcDistance(p+h.xyy) - calcDistance(p-h.xyy),
-        calcDistance(p+h.yxy) - calcDistance(p-h.yxy),
-        calcDistance(p+h.yyx) - calcDistance(p-h.yyx)));
+float RayMarch(vec3 ro, vec3 rd) {
+	float dO=0.;
+    
+    for(int i=0; i<MAX_STEPS; i++) {
+    	vec3 p = ro + rd*dO;
+        float dS = GetDist(p);
+        dO += dS;
+        if(dO>MAX_DIST || dS<SURF_DIST) break;
+    }
+    
+    return dO;
+}
+
+vec3 GetNormal(vec3 p) {
+	float d = GetDist(p);
+    vec2 e = vec2(.001, 0);
+    
+    vec3 n = d - vec3(
+        GetDist(p-e.xyy),
+        GetDist(p-e.yxy),
+        GetDist(p-e.yyx));
+    
+    return normalize(n);
+}
+
+float GetLight(vec3 p) {
+    vec3 lightPos = vec3(0, 5, -6);
+    vec3 l = normalize(lightPos-p);
+    vec3 n = GetNormal(p);
+    
+    float dif = clamp(dot(n, l), 0., 1.);
+    float d = RayMarch(p+n*SURF_DIST*2., l);
+    if(d<length(lightPos-p)) dif *= .1;
+    
+    return dif;
 }
 
 void main()
 {
-    vec2 resolution = vec2(RESOLUTION_X / RESOLUTION_Y, 1.0);
+    vec2 resolution = vec2(RESOLUTION_X, RESOLUTION_Y);
+    vec2 uv = (gl_FragCoord.xy -.5 * resolution.xy) / resolution.y;
 
-    vec3 cameraPos = (mProj * mView * mWorld * vec4(camPos, 1.0)).xyz;
-    vec3 lightDirection = normalize(sunlightDirection);
-    vec3 uvNormal = normalize(vec3((v_uv - vec2(0.5)) * resolution, -1));
-    vec3 rayDirection = uvNormal;
+    vec3 col = vec3(0);
+    
+    vec3 cLook = normalize(camLookAt);
+    vec3 ro = camPos;
+    vec3 rd = normalize(vec3(uv.x-camLookAt.x, uv.y-camLookAt.y, 1));
 
-    vec3 rayPos = cameraPos;
-    float distance = 0.0;
+    float d = RayMarch(ro, rd);
+    
+    vec3 p = ro + rd * d;
+    
+    float dif = GetLight(p);
+    col = vec3(dif);
+    
+    col = pow(col, vec3(.4545));	// gamma correction
 
-    for (int i = 0; i < 256; i++)
-    {
-        vec3 pos = cameraPos + distance * rayDirection;
-        float currentDistance = calcDistance(pos);
-
-        distance += currentDistance;
-
-        if (currentDistance < DISTANCE_MIN || distance > DISTANCE_MAX)
-        {
-            break;
-        }
-    }
-
-    vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
-
-    if (distance < DISTANCE_MAX)
-    {
-        vec3 finalPosition = cameraPos + distance * rayDirection;
-        vec3 normal = calcNormal(finalPosition);
-        color = vec4(1.0);
-
-        float diff = dot(lightDirection, normal);
-        color = vec4(diff, diff, diff, 1.0);
-    }
-
-    gl_FragColor = color;
+    gl_FragColor = vec4(col, 1.0);
 }
