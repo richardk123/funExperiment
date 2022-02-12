@@ -23,7 +23,7 @@ import { Snake } from "./renderable/snake";
 
 export class RendererOpengl implements Renderer
 {
-    renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity) => void;
+    renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity, playerSpheres: ReadonlyArray<Entity>) => void;
 
     static MAX_NUMBER_OF_BOX_INSTANCES = Math.pow(100, 2);
     static SHADOW_MAP_SIZE = 2048;
@@ -46,7 +46,7 @@ export class RendererOpengl implements Renderer
 
         const ortographicCamera = new OrtographicCamera(gl);
 
-        this.renderFunc = (cubes, sun, cameraPerspective) =>
+        this.renderFunc = (cubes, sun, cameraPerspective, playerSpheres) =>
         {
             // optimalizations
             gl.enable(gl.DEPTH_TEST);
@@ -60,18 +60,18 @@ export class RendererOpengl implements Renderer
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
             // clear buffers and colors
-            gl.clearColor(0.1, 0, 0, 1.0);
+            gl.clearColor(0, 0, 0, 1.0);
             gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
             // standard
-            skybox.render(cameraPerspective, skyboxProgram);
-            directionalLight.render(sun, program);
-            perspectiveCamera.render(cameraPerspective, program);
-            cubeRenderer.render(cubes, program);
+            // skybox.render(cameraPerspective, skyboxProgram);
+            // directionalLight.render(sun, program);
+            // perspectiveCamera.render(cameraPerspective, program);
+            // cubeRenderer.render(cubes, program);
             
             // meta
             directionalLight.render(sun, metaProgram);
-            snake.render(cameraPerspective, metaProgram);
+            snake.render(cameraPerspective, metaProgram, playerSpheres);
 
             // depth
             // gl.useProgram(depthProgram);
@@ -82,8 +82,8 @@ export class RendererOpengl implements Renderer
         }
     }
 
-    render(boxes: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity): void
+    render(boxes: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity, playerSpheres: ReadonlyArray<Entity>): void
     {
-        this.renderFunc(boxes, sun, cameraPerspective);
+        this.renderFunc(boxes, sun, cameraPerspective, playerSpheres);
     }
 }

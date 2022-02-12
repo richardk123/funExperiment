@@ -4,4 +4,5 @@ export enum EntityTags
     CUBE,
     CAMERA_PERSPECTIVE,
     CAMERA_ORTOGRAPHIC,
+    PLAYER_SPHERE
 }

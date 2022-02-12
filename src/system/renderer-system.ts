@@ -1,6 +1,6 @@
 
 import { System } from "tick-knock";
-import { QueryHolder } from "../query-holder";
+import { QueryHolder } from "../common/query-holder";
 import { Renderer } from "../renderer/renderer";
 
 export class RendererSystem extends System
@@ -15,7 +15,8 @@ export class RendererSystem extends System
         const boxes = QueryHolder.boxQuery.entities;
         const sun = QueryHolder.sunQuery.first;
         const cameraPerspective = QueryHolder.cameraPerspectiveQuery.first;
+        const playerSpheres = QueryHolder.playerSpheresQuery.entities;
 
-        this.renderer.render(boxes, sun, cameraPerspective);
+        this.renderer.render(boxes, sun, cameraPerspective, playerSpheres);
     }
 }

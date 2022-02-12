@@ -1,3 +1,9 @@
+#define DISTANCE_MAX 1000.0
+#define DISTANCE_MIN 0.01
+#define RESOLUTION_X 1024
+#define RESOLUTION_Y 768
+#define MAX_OBJECT_COUNT 10
+
 precision mediump float;
 
 uniform mat4 mView;
@@ -6,34 +12,40 @@ uniform mat4 mWorld;
 uniform vec3 camPos;
 uniform vec3 camLookAt;
 uniform vec3 sunlightDirection;
+uniform vec3 playerSpheres[10];
+uniform int playerSpheresCount;
+
 varying vec2 v_uv;
 
-float smin( float a, float b, float k )
+float smin(float a, float b, float k)
 {
     float h = a-b;
     return 0.5*( (a+b) - sqrt(h*h+k) );
 }
 
-float createSphere( vec3 p, float s )
+float sdSphere(vec3 p, vec3 spherePos, float s)
 {
-    return length(p) - s;
-}
-
-float createBox(vec3 p, vec3 b)
-{
-    vec3 q = abs(p) - b;
-    return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
+    vec4 cube1Pos = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(spherePos, 1.0));
+    return length(cube1Pos.xyz) - s;
 }
 
 float calcDistance(vec3 p)
 {
-    vec4 cube1Pos = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(1.0, 0.0, 0.0, 1.0));
-    vec4 cube2Pos  = mProj * mView * mWorld * (vec4(p, 1.0) + vec4(-1.0, 0.0, 0.0, 1.0));
+    float distance = smin(
+                sdSphere(p, playerSpheres[0], 0.6),
+                sdSphere(p, playerSpheres[1], 0.6),
+                0.2);
 
-    return smin(
-        createSphere(cube1Pos.xyz, 0.6),
-        createSphere(cube2Pos.xyz, 0.6),
-        0.2);
+    for (int i = 2; i < MAX_OBJECT_COUNT; i++)
+    {
+        if (i >= playerSpheresCount)
+        {
+            break;
+        }
+        distance = smin(distance, sdSphere(p, playerSpheres[i], 0.6), 0.2);
+    }
+
+    return distance;
 }
 
 vec3 calcNormal(vec3 p) // for function f(p)
@@ -48,7 +60,7 @@ vec3 calcNormal(vec3 p) // for function f(p)
 
 void main()
 {
-    vec2 resolution = vec2(1024.0 / 768.0, 1.0);
+    vec2 resolution = vec2(RESOLUTION_X / RESOLUTION_Y, 1.0);
 
     vec3 cameraPos = (mProj * mView * mWorld * vec4(camPos, 1.0)).xyz;
     vec3 lightDirection = normalize(sunlightDirection);
@@ -57,7 +69,6 @@ void main()
 
     vec3 rayPos = cameraPos;
     float distance = 0.0;
-    float distanceMax = 1000.0;
 
     for (int i = 0; i < 256; i++)
     {
@@ -66,7 +77,7 @@ void main()
 
         distance += currentDistance;
 
-        if (currentDistance < 0.01 || distance > distanceMax)
+        if (currentDistance < DISTANCE_MIN || distance > DISTANCE_MAX)
         {
             break;
         }
@@ -74,7 +85,7 @@ void main()
 
     vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
 
-    if (distance < distanceMax)
+    if (distance < DISTANCE_MAX)
     {
         vec3 finalPosition = cameraPos + distance * rayDirection;
         vec3 normal = calcNormal(finalPosition);

@@ -1,7 +1,7 @@
 import { System } from "tick-knock";
 import { EyePosition } from "../component/camera/eye-pos";
 import { LookAtPosition } from "../component/camera/look-at";
-import { QueryHolder } from "../query-holder";
+import { QueryHolder } from "../common/query-holder";
 import { DebugRenderer } from "../ui/debug-renderer";
 
 export class DebugSystem extends System

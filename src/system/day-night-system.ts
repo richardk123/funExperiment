@@ -1,10 +1,10 @@
 import {Entity, Query, System} from "tick-knock";
-import {EntityTags} from "../entity/entity-tags";
+import {EntityTags} from "../common/entity-tags";
 import {Direction} from "../component/direction";
 import * as GLM from "gl-matrix";
 import { AmbientLightIntensity } from "../component/light/abmient-light-intensity";
 import { SunlightIntensity } from "../component/light/sun-light-intensity";
-import { QueryHolder } from "../query-holder";
+import { QueryHolder } from "../common/query-holder";
 
 export class DayNightSystem extends System
 {
