@@ -1,36 +1,47 @@
 import { Entity, System } from "tick-knock";
 import { EntityTags } from "../common/entity-tags";
 import { Position } from "../component/position";
+import { Bezier, Point } from "bezier-js";
+import { Head } from "../component/player/head";
+import { Tail } from "../component/player/tail";
+import { PartsCount } from "../component/player/parts-count";
+import { Body } from "../component/player/body";
+import { V3 } from "../component/base/v3";
 
 export class PlayerSystem extends System
 {
-    Z = -1;
-
     onAddedToEngine(): void 
     {
-        const entity1 = new Entity();
-        entity1.add(new Position(-1, 1, 0));
-        entity1.add(EntityTags.PLAYER_SPHERE)
-        this.engine.addEntity(entity1);
+        const player = new Entity();
+        player.add(new Head(0, 1, 0));
+        player.add(new Tail(3, 1, 0));
+        player.add(new PartsCount(3));
+        player.add(EntityTags.PLAYER);
 
-        const entity2 = new Entity();
-        entity2.add(new Position(0, 1, 0));
-        entity2.add(EntityTags.PLAYER_SPHERE)
-        this.engine.addEntity(entity2);
-
-        const entity3 = new Entity();
-        entity3.add(new Position(1, 1, 0));
-        entity3.add(EntityTags.PLAYER_SPHERE)
-        this.engine.addEntity(entity3);
-
-        const entity4 = new Entity();
-        entity4.add(new Position(2, 1, 0));
-        entity4.add(EntityTags.PLAYER_SPHERE)
-        this.engine.addEntity(entity4);
+        this.generatePoints(player);
+        this.engine.addEntity(player);
     }
 
     update(dt: number): void 
     {
-        
+
+    }
+
+    private generatePoints(player: Entity)
+    {
+        const head = player.get(Head);
+        const tail = player.get(Tail);
+        const partCount = player.get(PartsCount);
+
+        const points = [head, {x: 2, y : 1, z: 0}, tail];
+        const bezier = new Bezier(points);
+        const bodyData = bezier.getLUT(partCount.count);
+
+        const bodyDataV3 = new Array<V3>();
+        bodyData.forEach(data =>
+        {
+            bodyDataV3.push(new V3(data.x, data.y, data.z));
+        });
+        player.add(new Body(bodyDataV3));
     }
 }

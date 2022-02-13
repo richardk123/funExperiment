@@ -1,4 +1,4 @@
-export abstract class V3
+export class V3
 {
     private data = new Float32Array(3);
 

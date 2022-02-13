@@ -15,8 +15,8 @@ export class RendererSystem extends System
         const boxes = QueryHolder.boxQuery.entities;
         const sun = QueryHolder.sunQuery.first;
         const cameraPerspective = QueryHolder.cameraPerspectiveQuery.first;
-        const playerSpheres = QueryHolder.playerSpheresQuery.entities;
+        const player = QueryHolder.playerQuery.first;
 
-        this.renderer.render(boxes, sun, cameraPerspective, playerSpheres);
+        this.renderer.render(boxes, sun, cameraPerspective, player);
     }
 }

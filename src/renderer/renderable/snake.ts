@@ -6,10 +6,11 @@ import { PespectiveCamera } from "./perspective-camera";
 import { EyePosition } from "../../component/camera/eye-pos";
 import { LookAtPosition } from "../../component/camera/look-at";
 import { Position } from "../../component/position";
+import { Body } from "../../component/player/body";
 
 export class Snake
 {
-    readonly render: (camera: Entity, program: WebGLProgram, playerSpheres: ReadonlyArray<Entity>) => void;
+    readonly render: (camera: Entity, program: WebGLProgram, player: Entity) => void;
 
     constructor(gl: WebGL2RenderingContext)
     {
@@ -17,7 +18,7 @@ export class Snake
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        this.render = (camera, program, playerSpheres) =>
+        this.render = (camera, program, player) =>
         {
             gl.useProgram(program);
 
@@ -38,19 +39,19 @@ export class Snake
             gl.vertexAttribPointer(positionAttribLocation, 2, gl.FLOAT, false, 0, 0);
 
             // player
-            const playerData = new Float32Array(3 * playerSpheres.length);
-            playerSpheres
-                .map(sphere => sphere.get(Position))
-                .forEach((sphere, index) =>
+            const bodyParts = player.get(Body);
+            const playerData = new Float32Array(3 * bodyParts.bodyPositions.length);
+            bodyParts.bodyPositions
+                .forEach((position, index) =>
                 {
                     const baseIndex = 3 * index;
-                    playerData[baseIndex + 0] = sphere.x;
-                    playerData[baseIndex + 1] = sphere.y;
-                    playerData[baseIndex + 2] = sphere.z;
+                    playerData[baseIndex + 0] = position.x;
+                    playerData[baseIndex + 1] = position.y;
+                    playerData[baseIndex + 2] = position.z;
                 });
                 
             gl.uniform3fv(playerSpheresLocation, playerData);
-            gl.uniform1i(playerSpheresCountLocation, playerSpheres.length);
+            gl.uniform1i(playerSpheresCountLocation, bodyParts.bodyPositions.length);
 
             // Compute the projection matrix
             var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;

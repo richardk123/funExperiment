@@ -23,7 +23,7 @@ import { Snake } from "./renderable/snake";
 
 export class RendererOpengl implements Renderer
 {
-    renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity, playerSpheres: ReadonlyArray<Entity>) => void;
+    renderFunc: (entities: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity, player: Entity) => void;
 
     static MAX_NUMBER_OF_BOX_INSTANCES = Math.pow(100, 2);
     static SHADOW_MAP_SIZE = 2048;
@@ -46,7 +46,7 @@ export class RendererOpengl implements Renderer
 
         const ortographicCamera = new OrtographicCamera(gl);
 
-        this.renderFunc = (cubes, sun, cameraPerspective, playerSpheres) =>
+        this.renderFunc = (cubes, sun, cameraPerspective, player) =>
         {
             // optimalizations
             gl.enable(gl.DEPTH_TEST);
@@ -71,7 +71,7 @@ export class RendererOpengl implements Renderer
             
             // meta
             directionalLight.render(sun, metaProgram);
-            snake.render(cameraPerspective, metaProgram, playerSpheres);
+            snake.render(cameraPerspective, metaProgram, player);
 
             // depth
             // gl.useProgram(depthProgram);
@@ -82,8 +82,8 @@ export class RendererOpengl implements Renderer
         }
     }
 
-    render(boxes: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity, playerSpheres: ReadonlyArray<Entity>): void
+    render(boxes: ReadonlyArray<Entity>, sun: Entity, cameraPerspective: Entity, player: Entity): void
     {
-        this.renderFunc(boxes, sun, cameraPerspective, playerSpheres);
+        this.renderFunc(boxes, sun, cameraPerspective, player);
     }
 }

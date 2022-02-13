@@ -1,6 +1,6 @@
 #define MAX_STEPS 100
 #define MAX_DIST 100.
-#define SURF_DIST .001
+#define SURF_DIST .0001
 #define RESOLUTION_X 1024
 #define RESOLUTION_Y 768
 #define MAX_OBJECT_COUNT 10
@@ -29,19 +29,31 @@ float sdSphere(vec3 p, float s)
     return length(p) - s;
 }
 
+float sdCapsule(vec3 p, vec3 a, vec3 b, float r)
+{
+    vec3 pa = p - a, ba = b - a;
+    float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+    return length( pa - ba*h ) - r;
+}
+
 float GetDist(vec3 p)
 {
     float distance = smin(
-                sdSphere(p - playerSpheres[0], 0.3),
-                sdSphere(p - playerSpheres[1], 0.3), 0.2);
+                    sdCapsule(p, playerSpheres[0], playerSpheres[1], 0.1),
+                    sdCapsule(p, playerSpheres[1], playerSpheres[2], 0.1), 
+                    0.1);
 
-    for (int i = 2; i < MAX_OBJECT_COUNT; i++)
+    for (int i = 1; i < MAX_OBJECT_COUNT; i++)
     {
-        if (i >= playerSpheresCount)
+        if (i >= playerSpheresCount - 1)
         {
             break;
         }
-        distance = smin(distance, sdSphere(p - playerSpheres[i], 0.3), 0.2);
+
+        distance = smin(
+                    distance,
+                    sdCapsule(p, playerSpheres[i + 0], playerSpheres[i + 1], 0.1), 
+                    0.1);
     }
 
     // return distance;
