@@ -44,7 +44,7 @@ export class V3
         return this.data;
     }
 
-    set setAsArray(data: Float32Array)
+    set asArray(data: Float32Array)
     {
         this.data = data;
     }

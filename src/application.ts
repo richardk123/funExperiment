@@ -13,6 +13,7 @@ import { DebugSystem } from "./system/debug-system";
 import { MapSystem } from "./system/map-system";
 import { PerspectiveCameraSystem } from "./system/perspective-camera-system";
 import { PlayerSystem } from "./system/player-system";
+import { FollowCameraSystem } from "./system/follow-camera-system";
 
 
 export class Application
@@ -28,12 +29,14 @@ export class Application
         const debugSystem = new DebugSystem();
         const mapSystem = new MapSystem();
         const playerSystem = new PlayerSystem();
+        const followCameraSystem = new FollowCameraSystem();
 
         engine.addSystem(rendererSystem);
         engine.addSystem(perspectiveCameraSystem);
         engine.addSystem(dayNightSystem);
-        engine.addSystem(playerSystem)
-        engine.addSystem(mapSystem)
+        engine.addSystem(playerSystem);
+        engine.addSystem(mapSystem);
+        engine.addSystem(followCameraSystem);
         engine.addSystem(debugSystem);
 
         this.mainLoop(engine, 0);
