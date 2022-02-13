@@ -63,8 +63,8 @@ export class PlayerSystem extends System
         GLM.quat.setAxisAngle(quat, axis, angle * (Math.PI / 180));
         GLM.vec3.transformQuat(pointToCurve.asArray, pointToCurve.asArray, quat);
 
-        pointToCurve.x = head.x - pointToCurve.x;
-        pointToCurve.z = head.z - pointToCurve.z;
+        pointToCurve.x = head.x + pointToCurve.x;
+        pointToCurve.z = head.z + pointToCurve.z;
         pointToCurve.y = 1;
 
         return pointToCurve;
