@@ -75,10 +75,10 @@ float RayMarch(vec3 ro, vec3 rd) {
 }
 
 vec3 GetNormal(vec3 p) {
-	float d = GetDist(p);
+	float dist = GetDist(p);
     vec2 e = vec2(.001, 0);
     
-    vec3 n = d - vec3(
+    vec3 n = dist - vec3(
         GetDist(p-e.xyy),
         GetDist(p-e.yxy),
         GetDist(p-e.yyx));
@@ -92,28 +92,35 @@ float GetLight(vec3 p) {
     vec3 n = GetNormal(p);
     
     float dif = clamp(dot(n, l), 0., 1.);
-    float d = RayMarch(p+n*SURF_DIST*2., l);
-    if(d<length(lightPos-p)) dif *= .1;
+    float dist = RayMarch(p+n*SURF_DIST*2., l);
+    if(dist<length(lightPos-p)) dif *= .1;
     
     return dif;
+}
+
+mat3 calcLookAtMatrix(vec3 origin, vec3 target, float roll) {
+  vec3 rr = vec3(sin(roll), cos(roll), 0.0);
+  vec3 ww = normalize(target - origin);
+  vec3 uu = normalize(cross(ww, rr));
+  vec3 vv = normalize(cross(uu, ww));
+
+  return mat3(uu, vv, ww);
 }
 
 void main()
 {
     vec2 resolution = vec2(RESOLUTION_X, RESOLUTION_Y);
     vec2 uv = (gl_FragCoord.xy -.5 * resolution.xy) / resolution.y;
+    mat3 matrix = calcLookAtMatrix(camPos, camLookAt, 0.);
 
-    vec3 col = vec3(0);
+    vec3 rd = normalize(matrix * vec3(uv.x, uv.y, 1.));
+    float dist = RayMarch(camPos, rd);
     
-    vec3 cLook = normalize(camLookAt);
-    vec3 ro = camPos;
-    vec3 rd = normalize(vec3(uv.x-camLookAt.x, uv.y-camLookAt.y, 1));
-
-    float d = RayMarch(ro, rd);
-    
-    vec3 p = ro + rd * d;
+    vec3 p = camPos + rd * dist;
     
     float dif = GetLight(p);
+    
+    vec3 col = vec3(0);
     col = vec3(dif);
     
     col = pow(col, vec3(.4545));	// gamma correction

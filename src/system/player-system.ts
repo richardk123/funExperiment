@@ -7,24 +7,28 @@ import { Tail } from "../component/player/tail";
 import { PartsCount } from "../component/player/parts-count";
 import { Body } from "../component/player/body";
 import { V3 } from "../component/base/v3";
+import * as GLM from "gl-matrix";
+import { HeadAngle } from "../component/player/head-angle";
 
 export class PlayerSystem extends System
 {
+    private _player: Entity;
     onAddedToEngine(): void 
     {
-        const player = new Entity();
-        player.add(new Head(0, 1, 0));
-        player.add(new Tail(3, 1, 0));
-        player.add(new PartsCount(3));
-        player.add(EntityTags.PLAYER);
+        this._player = new Entity();
+        this._player.add(new Head(0, 1, 0));
+        this._player.add(new Tail(4, 1, 0));
+        this._player.add(new PartsCount(8));
+        this._player.add(new HeadAngle(0));
+        this._player.add(EntityTags.PLAYER);
 
-        this.generatePoints(player);
-        this.engine.addEntity(player);
+        this.generatePoints(this._player);
+        this.engine.addEntity(this._player);
     }
 
     update(dt: number): void 
     {
-
+        this.generatePoints(this._player);
     }
 
     private generatePoints(player: Entity)
@@ -33,7 +37,9 @@ export class PlayerSystem extends System
         const tail = player.get(Tail);
         const partCount = player.get(PartsCount);
 
-        const points = [head, {x: 2, y : 1, z: 0}, tail];
+        const belzierPoint = this.rotateBelzierPoint(player);
+
+        const points = [head, belzierPoint, tail];
         const bezier = new Bezier(points);
         const bodyData = bezier.getLUT(partCount.count);
 
@@ -43,5 +49,24 @@ export class PlayerSystem extends System
             bodyDataV3.push(new V3(data.x, data.y, data.z));
         });
         player.add(new Body(bodyDataV3));
+    }
+
+    private rotateBelzierPoint(player: Entity): V3
+    {
+        const head = player.get(Head);
+        const angle = player.get(HeadAngle).value;
+
+        const quat = GLM.quat.create();
+        const axis = GLM.vec3.fromValues(0, 1, 0);
+
+        const pointToCurve = new V3(2, 0, 0);
+        GLM.quat.setAxisAngle(quat, axis, angle * (Math.PI / 180));
+        GLM.vec3.transformQuat(pointToCurve.asArray, pointToCurve.asArray, quat);
+
+        pointToCurve.x = head.x - pointToCurve.x;
+        pointToCurve.z = head.z - pointToCurve.z;
+        pointToCurve.y = 1;
+
+        return pointToCurve;
     }
 }

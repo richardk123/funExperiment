@@ -32,9 +32,9 @@ export class Application
         engine.addSystem(rendererSystem);
         engine.addSystem(perspectiveCameraSystem);
         engine.addSystem(dayNightSystem);
-        engine.addSystem(debugSystem);
-        engine.addSystem(mapSystem)
         engine.addSystem(playerSystem)
+        engine.addSystem(mapSystem)
+        engine.addSystem(debugSystem);
 
         this.mainLoop(engine, 0);
     }
