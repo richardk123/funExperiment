@@ -47,7 +47,13 @@ export class PlayerSystem extends System
 
         const points = [head, belzierPoint, tail];
         const bezier = new Bezier(points);
-        const bodyData = bezier.getLUT(partCount.count);
+        let bodyData = bezier.getLUT(partCount.count);
+
+        // bodyData = [];
+        // for (let i = 0; i < partCount.count; i++)
+        // {
+        //     bodyData.push(bezier.get(i * (1 / partCount.count)));
+        // }
 
         const bodyDataV3 = new Array<V3>();
         bodyData.forEach((data, index) =>

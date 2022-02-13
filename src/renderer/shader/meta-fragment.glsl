@@ -24,6 +24,12 @@ float smin(float a, float b, float k)
     return 0.5*((a+b)-sqrt(h*h+k));
 }
 
+float sdBox( vec3 p, vec3 b )
+{
+  vec3 q = abs(p) - b;
+  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
+}
+
 float sdSphere(vec3 p, float s)
 {
     return length(p) - s;
@@ -58,7 +64,10 @@ float GetDist(vec3 p)
 
     // return distance;
     float planeDist = p.y;
-    return min(planeDist, distance);
+    distance = min(planeDist, distance);
+
+    distance = min(distance, sdBox(p + vec3(3, 0, 2), vec3(1)));
+    return distance;
 }
 
 float RayMarch(vec3 ro, vec3 rd) {
