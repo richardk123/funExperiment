@@ -18,8 +18,8 @@ export class FollowCameraSystem extends System
         const camPos = camera.get(EyePosition);
         const lookAt = camera.get(LookAtPosition);
         
-        camPos.x = tail.x;
-        camPos.z = tail.z;
+        // camPos.x = tail.x;
+        // camPos.z = tail.z;
         lookAt.x = head.x;
         lookAt.y = head.y;
         lookAt.z = head.z;

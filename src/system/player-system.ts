@@ -10,7 +10,7 @@ import { V3 } from "../component/base/v3";
 import * as GLM from "gl-matrix";
 import { HeadAngle } from "../component/player/head-angle";
 
-const DEFAULT_Y = 1;
+const DEFAULT_Y = 0.3;
 const DEFAULT_PART_SIZE = 0.5;
 const MOVE_SPEED = 0.03;
 export class PlayerSystem extends System
@@ -64,7 +64,7 @@ export class PlayerSystem extends System
         const dataSize = bodyData.length;
         for (let i = 0; i < dataSize - 1; i++)
         {
-            const offset = Math.sin(this._time + (i * (Math.PI / 4 / dataSize)));
+            const offset = Math.sin((this._time + (i * (Math.PI / 8 / dataSize))) * 5);
             const first = bodyDataV3[i];
             const second = bodyDataV3[i + 1];
 
@@ -74,14 +74,14 @@ export class PlayerSystem extends System
             {
                 GLM.vec3.subtract(direction, first.asArray, second.asArray);
                 GLM.vec3.normalize(direction, direction);
-                GLM.vec3.scale(direction, direction, offset / 100);
+                GLM.vec3.scale(direction, direction, offset / 10);
                 GLM.vec3.add(first.asArray, first.asArray, direction);
             }
             else
             {
                 GLM.vec3.subtract(direction, second.asArray, first.asArray);
                 GLM.vec3.normalize(direction, direction);
-                GLM.vec3.scale(direction, direction, offset / 100);
+                GLM.vec3.scale(direction, direction, offset / 10);
                 GLM.vec3.add(second.asArray, second.asArray, direction);
             }
         }

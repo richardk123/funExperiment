@@ -9,7 +9,7 @@ export class AngleComponent extends React.Component<V1Props>
         return (
             <div>
                 <div>{this.props.title}</div>
-                <SliderComponent title="Angle:" min={-90} max={90} getVal={() => this.props.v1.value} setVal={(val) => this.props.v1.value = val}/>
+                <SliderComponent title="Angle:" min={-180} max={180} getVal={() => this.props.v1.value} setVal={(val) => this.props.v1.value = val}/>
             </div>
         );
     }
