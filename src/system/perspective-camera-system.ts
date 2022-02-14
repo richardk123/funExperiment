@@ -14,7 +14,7 @@ export class PerspectiveCameraSystem extends System
     onAddedToEngine(): void 
     {
         const perspectiveCamera = new Entity()
-        .add(new EyePosition(0.5, 2, -10))
+        .add(new EyePosition(0.5, 7.5, -10))
         .add(new LookAtPosition(0, 0, 0))
         .add(EntityTags.CAMERA_PERSPECTIVE);
     

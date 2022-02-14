@@ -38,7 +38,7 @@ export class RendererOpengl implements Renderer
         const skyboxProgram = WebglUtils.createShaderProgram(gl, skyboxVertexShaderFile, skyboxFragmentShaderFile, "skybox");
         const metaProgram = WebglUtils.createShaderProgram(gl, metaVertexShaderFile, metaFragmentShaderFile, "meta");
         
-        const skybox = new Skybox(gl);
+        // const skybox = new Skybox(gl);
         const cubeRenderer = new Cube(gl, RendererOpengl.MAX_NUMBER_OF_BOX_INSTANCES);
         const directionalLight = new DirectionalLight(gl);
         const perspectiveCamera = new PespectiveCamera(gl);
@@ -72,7 +72,7 @@ export class RendererOpengl implements Renderer
             // meta
             directionalLight.render(sun, metaProgram);
             snake.render(cameraPerspective, metaProgram, player);
-
+            
             // depth
             // gl.useProgram(depthProgram);
             // directionalLight.render(sun, depthProgram);
