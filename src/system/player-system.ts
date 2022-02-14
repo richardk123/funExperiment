@@ -27,17 +27,17 @@ export class PlayerSystem extends System
         this._player.add(new HeadAngle(0));
         this._player.add(EntityTags.PLAYER);
 
-        this.generatePoints(this._player);
+        this.generatePoints(this._player, 1);
         this.engine.addEntity(this._player);
     }
 
     update(dt: number): void 
     {
         this._time += MOVE_SPEED; // move speed
-        this.generatePoints(this._player);
+        this.generatePoints(this._player, dt);
     }
 
-    private generatePoints(player: Entity)
+    private generatePoints(player: Entity, dt: number)
     {
         const head = player.get(Head);
         const tail = player.get(Tail);
@@ -49,12 +49,6 @@ export class PlayerSystem extends System
         const bezier = new Bezier(points);
         let bodyData = bezier.getLUT(partCount.count);
 
-        // bodyData = [];
-        // for (let i = 0; i < partCount.count; i++)
-        // {
-        //     bodyData.push(bezier.get(i * (1 / partCount.count)));
-        // }
-
         const bodyDataV3 = new Array<V3>();
         bodyData.forEach((data, index) =>
         {
@@ -64,24 +58,24 @@ export class PlayerSystem extends System
         const dataSize = bodyData.length;
         for (let i = 0; i < dataSize - 1; i++)
         {
-            const offset = Math.sin((this._time + (i * (Math.PI / 8 / dataSize))) * 5);
+            const offset = Math.sin((this._time + (i * (Math.PI / 8 / dataSize))) * 2);
             const first = bodyDataV3[i];
             const second = bodyDataV3[i + 1];
 
             const direction = GLM.vec3.create();
-            
+            const speed = (offset / 10) * (dt / 2);
             if (offset > 0)
             {
                 GLM.vec3.subtract(direction, first.asArray, second.asArray);
                 GLM.vec3.normalize(direction, direction);
-                GLM.vec3.scale(direction, direction, offset / 10);
+                GLM.vec3.scale(direction, direction, speed);
                 GLM.vec3.add(first.asArray, first.asArray, direction);
             }
             else
             {
                 GLM.vec3.subtract(direction, second.asArray, first.asArray);
                 GLM.vec3.normalize(direction, direction);
-                GLM.vec3.scale(direction, direction, offset / 10);
+                GLM.vec3.scale(direction, direction, speed);
                 GLM.vec3.add(second.asArray, second.asArray, direction);
             }
         }
