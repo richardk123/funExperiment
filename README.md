@@ -1,6 +1,6 @@
 # funExperiment
 
 * Start
-- npm run serve
+npm run serve
 * Tests
-- npm run test
+npm run test
