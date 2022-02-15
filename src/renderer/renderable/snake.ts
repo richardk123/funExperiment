@@ -3,8 +3,6 @@ import { Shape } from "../shape";
 import { WebglUtils } from "../webgl-utils";
 import { EyePosition } from "../../component/camera/eye-pos";
 import { LookAtPosition } from "../../component/camera/look-at";
-import { Body } from "../../component/player/body";
-
 // skybox images
 import boxBack from './../../assets/skybox/Box_Back.jpg';
 import boxFront from './../../assets/skybox/Box_Front.jpg';
@@ -15,7 +13,7 @@ import boxRight from './../../assets/skybox/Box_Right.jpg';
 
 export class Snake
 {
-    readonly render: (camera: Entity, program: WebGLProgram, player: Entity) => void;
+    readonly render: (camera: Entity, program: WebGLProgram) => void;
 
     constructor(gl: WebGL2RenderingContext)
     {
@@ -26,7 +24,7 @@ export class Snake
         //skybox
         this.skybox(gl);
 
-        this.render = (camera, program, player) =>
+        this.render = (camera, program) =>
         {
             gl.useProgram(program);
 
@@ -34,8 +32,6 @@ export class Snake
 
             const camPosLocation = WebglUtils.getUniformLocation(program, 'camPos', gl);
             const camLookAtLocation = WebglUtils.getUniformLocation(program, 'camLookAt', gl);
-            const playerSpheresLocation = WebglUtils.getUniformLocation(program, 'playerSpheres', gl);
-            const playerSpheresCountLocation = WebglUtils.getUniformLocation(program, 'playerSpheresCount', gl);
             const skyboxLocation = WebglUtils.getUniformLocation(program, "u_skybox", gl);
 
             // Tell the shader to use texture unit 0 for u_skybox
@@ -46,21 +42,6 @@ export class Snake
             gl.bufferData(gl.ARRAY_BUFFER, Shape.quad, gl.STATIC_DRAW);
             gl.enableVertexAttribArray(positionAttribLocation);
             gl.vertexAttribPointer(positionAttribLocation, 2, gl.FLOAT, false, 0, 0);
-
-            // player
-            const bodyParts = player.get(Body);
-            const playerData = new Float32Array(3 * bodyParts.bodyPositions.length);
-            bodyParts.bodyPositions
-                .forEach((position, index) =>
-                {
-                    const baseIndex = 3 * index;
-                    playerData[baseIndex + 0] = position.x;
-                    playerData[baseIndex + 1] = position.y;
-                    playerData[baseIndex + 2] = position.z;
-                });
-                
-            gl.uniform3fv(playerSpheresLocation, playerData);
-            gl.uniform1i(playerSpheresCountLocation, bodyParts.bodyPositions.length);
 
             // View matrix
             const eye = camera.get(EyePosition);

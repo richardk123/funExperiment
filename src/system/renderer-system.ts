@@ -1,22 +1,20 @@
 
 import { System } from "tick-knock";
 import { QueryHolder } from "../common/query-holder";
-import { Renderer } from "../renderer/renderer";
+import { RendererOpengl } from "../renderer/renderer-opengl";
 
 export class RendererSystem extends System
 {
-    public constructor(public renderer: Renderer)
+    public constructor(public renderer: RendererOpengl)
     {
         super();
     }
 
     public update(): void 
     {
-        const boxes = QueryHolder.boxQuery.entities;
         const sun = QueryHolder.sunQuery.first;
         const cameraPerspective = QueryHolder.cameraPerspectiveQuery.first;
-        const player = QueryHolder.playerQuery.first;
 
-        this.renderer.render(boxes, sun, cameraPerspective, player);
+        this.renderer.render(sun, cameraPerspective);
     }
 }

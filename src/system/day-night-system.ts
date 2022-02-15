@@ -2,8 +2,6 @@ import {Entity, Query, System} from "tick-knock";
 import {EntityTags} from "../common/entity-tags";
 import {Direction} from "../component/direction";
 import * as GLM from "gl-matrix";
-import { AmbientLightIntensity } from "../component/light/abmient-light-intensity";
-import { SunlightIntensity } from "../component/light/sun-light-intensity";
 import { QueryHolder } from "../common/query-holder";
 
 export class DayNightSystem extends System
@@ -19,8 +17,6 @@ export class DayNightSystem extends System
     {
 
         const sun = new Entity()
-            .add(new AmbientLightIntensity(0.0, 0.0, 0.0))
-            .add(new SunlightIntensity(0.4, 0.4, 0.4))
             .add(new Direction(10.0, 10.0, 2.0))
             .add(EntityTags.SUN);
     

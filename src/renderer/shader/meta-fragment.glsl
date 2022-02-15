@@ -10,8 +10,6 @@ precision mediump float;
 uniform vec3 camPos;
 uniform vec3 camLookAt;
 uniform vec3 sunlightDirection;
-uniform vec3 playerSpheres[10];
-uniform int playerSpheresCount;
 
 uniform samplerCube u_skybox;
 
@@ -46,42 +44,15 @@ float sdCapsule(vec3 point, vec3 a, vec3 b, float r)
     return length( pa - ba*h ) - r;
 }
 
-float GetDistSnake(vec3 point)
-{
-    float dist = smin(
-                    sdCapsule(point, playerSpheres[0], playerSpheres[1], 0.1),
-                    sdCapsule(point, playerSpheres[1], playerSpheres[2], 0.1), 
-                    0.1);
-
-    for (int i = 1; i < MAX_OBJECT_COUNT; i++)
-    {
-        if (i >= playerSpheresCount - 1)
-        {
-            break;
-        }
-
-        dist = smin(
-                    dist,
-                    sdCapsule(point, playerSpheres[i + 0], playerSpheres[i + 1], 0.1), 
-                    0.1);
-    }
-    return dist;
-}
-
 vec2 GetDistMat(vec3 point)
 {
-    float snakeDist = GetDistSnake(point);
     float planeDist = point.y;
     float boxDist = sdBox(point + vec3(3, 0, 2), vec3(1));
 
-    float dist = min(boxDist, min(snakeDist, planeDist));
+    float dist = min(boxDist, planeDist);
     int mat = MAT_DEFAULT;
 
-    if (dist == snakeDist)
-    {
-        mat = MAT_SNAKE;
-    }
-    else if (dist == boxDist)
+    if (dist == boxDist)
     {
         mat = MAT_BOX;
     }
