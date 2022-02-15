@@ -4,7 +4,6 @@ import { RendererSystem } from "./system/renderer-system";
 import { QueryHolder } from "./common/query-holder";
 import { DebugSystem } from "./system/debug-system";
 import { PerspectiveCameraSystem } from "./system/perspective-camera-system";
-import { DayNightSystem } from "./system/day-night-system";
 
 export class Application
 {
@@ -15,11 +14,9 @@ export class Application
 
         const rendererSystem = new RendererSystem(new RendererOpengl());
         const perspectiveCameraSystem = new PerspectiveCameraSystem();
-        const dayNightSystem = new DayNightSystem();
         const debugSystem = new DebugSystem();
 
         engine.addSystem(perspectiveCameraSystem);
-        engine.addSystem(dayNightSystem);
         engine.addSystem(debugSystem);
         engine.addSystem(rendererSystem);
 

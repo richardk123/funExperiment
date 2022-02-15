@@ -4,7 +4,7 @@ import * as GLM from 'gl-matrix';
 import { EyePosition } from "../../component/camera/eye-pos";
 import { LookAtPosition } from "../../component/camera/look-at";
 
-export class PespectiveCamera
+export class Camera
 {
     static FOV = GLM.glMatrix.toRadian(90);
 
@@ -31,7 +31,7 @@ export class PespectiveCamera
             // projection matrix (prevede na -1 to 1 souradnice pro gpu)
             const aspectRation = gl.canvas.clientWidth / gl.canvas.clientHeight;
             const projMatrix = new Float32Array(16);
-            GLM.mat4.perspective(projMatrix, PespectiveCamera.FOV, aspectRation, 0.1, 1000.0);
+            GLM.mat4.perspective(projMatrix, Camera.FOV, aspectRation, 0.1, 1000.0);
             gl.uniformMatrix4fv(matProjUniformLocation, false, projMatrix);
         }
     }

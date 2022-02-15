@@ -3,7 +3,6 @@ import metaFragmentShaderFile from '!!raw-loader!./shader/meta-fragment.glsl';
 
 import { Entity } from "tick-knock";
 import { WebglUtils } from "./webgl-utils";
-import { DirectionalLight } from "./renderable/directional-light";
 import { Snake } from "./renderable/snake";
 
 export class RendererOpengl
@@ -18,7 +17,6 @@ export class RendererOpengl
         const metaProgram = WebglUtils.createShaderProgram(gl, metaVertexShaderFile, metaFragmentShaderFile, "meta");
         
         // const skybox = new Skybox(gl);
-        const directionalLight = new DirectionalLight(gl);
         const snake = new Snake(gl);
 
         this.renderFunc = (sun, cameraPerspective) =>
@@ -39,7 +37,6 @@ export class RendererOpengl
             gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
             // meta
-            directionalLight.render(sun, metaProgram);
             snake.render(cameraPerspective, metaProgram);
             
         }
