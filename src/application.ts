@@ -1,8 +1,4 @@
 import { Engine, Entity } from "tick-knock";
-import { Direction } from "./component/direction";
-import { AmbientLightIntensity } from "./component/light/abmient-light-intensity";
-import { SunlightIntensity } from "./component/light/sun-light-intensity";
-import { EntityTags } from "./common/entity-tags";
 import {RendererOpengl} from "./renderer/renderer-opengl";
 import { RendererSystem } from "./system/renderer-system";
 import {DayNightSystem} from "./system/day-night-system";
@@ -31,13 +27,13 @@ export class Application
         const playerSystem = new PlayerSystem();
         const followCameraSystem = new FollowCameraSystem();
 
-        engine.addSystem(rendererSystem);
         engine.addSystem(perspectiveCameraSystem);
         engine.addSystem(dayNightSystem);
         engine.addSystem(playerSystem);
         engine.addSystem(mapSystem);
         engine.addSystem(followCameraSystem);
         engine.addSystem(debugSystem);
+        engine.addSystem(rendererSystem);
 
         this.mainLoop(engine, 0);
     }
