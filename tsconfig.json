@@ -11,5 +11,6 @@
     "jsx": "react",
     "lib": ["dom", "es6"],
     "rootDir": "src",
+    "esModuleInterop": true,
   }
 }
