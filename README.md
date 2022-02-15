@@ -1,6 +1,7 @@
 # funExperiment
 
-* Start
+# Start
 npm run serve
-* Tests
+
+# Tests
 npm run test
