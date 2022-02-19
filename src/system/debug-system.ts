@@ -9,7 +9,7 @@ export class DebugSystem extends System
 
     onAddedToEngine(): void 
     {
-        const cameraPerspective = QueryHolder.cameraPerspectiveQuery.first;
+        const cameraPerspective = QueryHolder.cameraQuery.first;
         const cameraPos = cameraPerspective.get(EyePosition);
         const cameraLookAt = cameraPerspective.get(LookAtPosition);
 

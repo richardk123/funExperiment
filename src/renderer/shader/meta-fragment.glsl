@@ -1,3 +1,4 @@
+#version 300 es
 #define MAX_STEPS 100
 #define MAX_DIST 30.
 #define SURF_DIST .0001
@@ -9,16 +10,26 @@ precision mediump float;
 
 uniform vec3 camPos;
 uniform vec3 camLookAt;
-uniform vec3 sunlightDirection;
 
 uniform samplerCube u_skybox;
+uniform sampler2D materialsData;
 
-varying vec2 v_uv;
+in vec2 v_uv;
+
+out vec4 outColor;
 
 const int MAT_DEFAULT = 0;
 const int MAT_SNAKE = 1;
 const int MAT_BOX = 2;
 const int MAT_PLANE = 3;
+
+struct material
+{
+    vec4 color;
+};
+
+material[5] materials;
+
 
 float smin(float a, float b, float k)
 {
@@ -127,7 +138,7 @@ vec3 GetMaterial(vec2 distMat, vec3 skyboxColor)
     }
     else if (mat == MAT_BOX)
     {
-        return vec3(1, 0, 0);
+        return materials[0].color.rgb;
     }
     else if (mat == MAT_SNAKE)
     {
@@ -139,11 +150,22 @@ vec3 GetMaterial(vec2 distMat, vec3 skyboxColor)
     }
 }
 
+void loadMaterials()
+{
+    ivec2 size = textureSize(materialsData, 0);
+
+    for (int y = 0; y < size.y; ++y) {
+        materials[y].color = texelFetch(materialsData, ivec2(0, y), 0);
+    }
+}
+
 void main()
 {
     vec2 resolution = vec2(RESOLUTION_X, RESOLUTION_Y);
     vec2 uv = (gl_FragCoord.xy -.5 * resolution.xy) / resolution.y;
     mat3 matrix = calcLookAtMatrix(camPos, camLookAt, 0.);
+
+    loadMaterials();
 
     vec3 rd = normalize(matrix * vec3(uv.x, uv.y, 1.));
 
@@ -153,17 +175,17 @@ void main()
 
     float dif = GetLight(point);
     
-    vec3 col = textureCube(u_skybox, rd).rgb;
+    vec3 col = texture(u_skybox, rd).rgb;
 
     if (distMat.x < MAX_DIST)
     {
         vec3 normal = GetNormal(point);
         vec3 reflectDir = reflect(rd, normal);
-        vec3 reflectSkyboxColor = textureCube(u_skybox, reflectDir).rgb;
+        vec3 reflectSkyboxColor = texture(u_skybox, reflectDir).rgb;
         col = GetMaterial(distMat, reflectSkyboxColor) * dif;
     }
     
     col = pow(col, vec3(.4545));	// gamma correction
 
-    gl_FragColor = vec4(col, 1.0);
+    outColor = vec4(col, 1.0);
 }

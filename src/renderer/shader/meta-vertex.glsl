@@ -1,12 +1,8 @@
+#version 300 es
 precision mediump float;
 
-attribute vec3 vertPosition;
-
-uniform mat4 mWorld;
-uniform mat4 mView;
-uniform mat4 mProj;
-
-varying vec2 v_uv;
+in vec3 vertPosition;
+out vec2 v_uv;
 
 
 void main()

@@ -4,6 +4,8 @@ import { RendererSystem } from "./system/renderer-system";
 import { QueryHolder } from "./common/query-holder";
 import { DebugSystem } from "./system/debug-system";
 import { PerspectiveCameraSystem } from "./system/perspective-camera-system";
+import { Scene } from "./common/scene";
+import { Color } from "./component/color";
 
 export class Application
 {
@@ -19,6 +21,10 @@ export class Application
         engine.addSystem(perspectiveCameraSystem);
         engine.addSystem(debugSystem);
         engine.addSystem(rendererSystem);
+
+        const scene = new Scene(engine);
+
+        scene.addMaterial("blue", new Color(0, 0, 1, 1));
 
         this.mainLoop(engine, 0);
     }

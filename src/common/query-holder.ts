@@ -1,10 +1,12 @@
 import { Engine, QueryBuilder } from "tick-knock";
-import { EntityTags } from "./entity-tags";
+import { ObjectType } from "../component/object-type";
 
 export class QueryHolder
 {
-    static readonly sunQuery = new QueryBuilder().contains(EntityTags.SUN).build();
-    static readonly cameraPerspectiveQuery = new QueryBuilder().contains(EntityTags.CAMERA_PERSPECTIVE).build();
+    static readonly sunQuery = new QueryBuilder().contains(ObjectType.SUN).build();
+    static readonly cameraQuery = new QueryBuilder().contains(ObjectType.CAMERA).build();
+    static readonly instanceQuery = new QueryBuilder().contains(ObjectType.INSTANCE).build();
+    static readonly materialQuery = new QueryBuilder().contains(ObjectType.MATERIAL).build();
 
     private constructor()
     {
@@ -13,6 +15,8 @@ export class QueryHolder
     static addQueries(engine: Engine)
     {
         engine.addQuery(this.sunQuery);
-        engine.addQuery(this.cameraPerspectiveQuery);
+        engine.addQuery(this.cameraQuery);
+        engine.addQuery(this.instanceQuery);
+        engine.addQuery(this.materialQuery);
     }
 }
