@@ -19,11 +19,6 @@ in vec2 v_uv;
 
 out vec4 outColor;
 
-const int MAT_DEFAULT = 0;
-const int MAT_SNAKE = 1;
-const int MAT_BOX = 2;
-const int MAT_PLANE = 3;
-
 struct material
 {
     vec4 color;
@@ -50,8 +45,6 @@ struct instance
     shape shape;
 };
 
-material[50] materials;
-instance[50] instances;
 int instanceCount;
 int materialCount;
 
@@ -80,68 +73,112 @@ float sdCapsule(vec3 point, vec3 a, vec3 b, float r)
     return length( pa - ba*h ) - r;
 }
 
-struct distMat
+instance GetInstance(int index)
 {
-    float distance;
-    int material;
-};
+    vec4 texel0 = texelFetch(instancesData, ivec2(0, index), 0);
+    vec4 texel1 = texelFetch(instancesData, ivec2(1, index), 0);
+    vec4 texel2 = texelFetch(instancesData, ivec2(2, index), 0);
+    instance instance;
+    instance.position = texel0.rgb;
+    instance.materialId = int(texel0.a);
+    instance.modifier.type = int(texel1.r);
+    instance.modifier.smoothness = texel1.g;
 
-vec2 GetDistMat(vec3 point)
+    instance.shape.type = int(texel1.b);
+    instance.shape.radius = texel1.a;
+    instance.shape.dimension = texel2.rgb;
+    return instance;
+}
+
+material GetMaterial(int index)
 {
+    material material;
+    material.color = texelFetch(materialsData, ivec2(0, index), 0);
+    return material;
+}
+
+// return material index by closes instance by point
+int GetMaterialIndex(vec3 point)
+{
+    int mat = 0;
     float dist = MAX_DIST;
-    float distCur = MAX_DIST + 1.;
-    int mat = MAT_DEFAULT;
-    
+    float distCur = MAX_DIST;
+
     for (int i = 0; i < instanceCount; i++)
     {
-        if (instances[i].shape.type == 0) // box
+        instance instance = GetInstance(i);
+        
+        if (instance.shape.type == 0) // box
         {
-            distCur = sdBox(point + instances[i].position, instances[i].shape.dimension);
+            distCur = sdBox(point + instance.position, instance.shape.dimension);
         }
-        else if (instances[i].shape.type == 1) // sphere
+        else if (instance.shape.type == 1) // sphere
         {
-            distCur = sdSphere(point + instances[i].position, instances[i].shape.radius);
+            distCur = sdSphere(point + instance.position, instance.shape.radius);
         }
 
-        dist = min(dist, distCur);
-
-        if (distCur == dist)
+        if (distCur < dist)
         {
-            mat = instances[i].materialId;
+            dist = distCur;
+            mat = instance.materialId;
         }
     }
 
-    return vec2(dist, mat);
+    return mat;
 }
 
-vec2 RayMarch(vec3 ro, vec3 rd) {
-	float dO = 0.;
-    float matHit = 0.;
+float GetDistance(vec3 point)
+{
+    float dist = MAX_DIST;
+    float distCur = MAX_DIST + 1.;
+    int mat = 0;
     
+    for (int i = 0; i < instanceCount; i++)
+    {
+        instance instance = GetInstance(i);
+        
+        if (instance.shape.type == 0) // box
+        {
+            distCur = sdBox(point + instance.position, instance.shape.dimension);
+        }
+        else if (instance.shape.type == 1) // sphere
+        {
+            distCur = sdSphere(point + instance.position, instance.shape.radius);
+        }
+
+        dist = smin(dist, distCur, instance.modifier.smoothness);
+
+        mat = instance.materialId;
+    }
+
+    return dist;
+}
+
+float RayMarch(vec3 ro, vec3 rd) {
+	float dO = 0.;
     for(int i = 0; i < MAX_STEPS; i++) 
     {
     	vec3 point = ro + rd*dO;
-        vec2 distMat = GetDistMat(point);
-        dO += distMat.x;
+        float dist = GetDistance(point);
+        dO += dist;
 
-        if(dO > MAX_DIST || distMat.x < SURF_DIST)
+        if(dO > MAX_DIST || dist < SURF_DIST)
         {
-            matHit = distMat.y;
             break;
         }
     }
     
-    return vec2(dO, matHit);
+    return dO;
 }
 
 vec3 GetNormal(vec3 point) {
-	float dist = GetDistMat(point).x;
+	float dist = GetDistance(point);
     vec2 e = vec2(.001, 0);
     
     vec3 n = dist - vec3(
-        GetDistMat(point-e.xyy).x,
-        GetDistMat(point-e.yxy).x,
-        GetDistMat(point-e.yyx).x);
+        GetDistance(point-e.xyy),
+        GetDistance(point-e.yxy),
+        GetDistance(point-e.yyx));
     
     return normalize(n);
 }
@@ -152,7 +189,7 @@ float GetLight(vec3 point) {
     vec3 n = GetNormal(point);
     
     float dif = clamp(dot(n, l), 0., 1.);
-    float dist = RayMarch(point+n*SURF_DIST*2., l).x;
+    float dist = RayMarch(point + n*SURF_DIST * 2., l);
     if(dist < length(lightPos-point)) dif *= .1;
     
     return dif;
@@ -167,53 +204,10 @@ mat3 calcLookAtMatrix(vec3 origin, vec3 target, float roll) {
   return mat3(uu, vv, ww);
 }
 
-vec3 GetMaterial(vec2 distMat, vec3 skyboxColor)
+vec3 GetColor(vec3 point, vec3 skyboxColor)
 {
-    return materials[int(distMat.y)].color.rgb;
-
-
-    // else if (mat == MAT_BOX)
-    // {
-    //     return materials[0].color.rgb;
-    // }
-    // else if (mat == MAT_SNAKE)
-    // {
-    //     return skyboxColor;
-    // }
-    // else if (mat == MAT_PLANE)
-    // {
-    //     return skyboxColor * 0.9 * vec3(1, 0, 1);
-    // }
-}
-
-void loadMaterials()
-{
-    ivec2 size = textureSize(materialsData, 0);
-    materialCount = size.y;
-    for (int y = 0; y < size.y; ++y) {
-        materials[y].color = texelFetch(materialsData, ivec2(0, y), 0);
-    }
-}
-
-void loadInstances()
-{
-    ivec2 size = textureSize(instancesData, 0);
-    instanceCount = size.y;
-    for (int y = 0; y < size.y; ++y) 
-    {
-        vec4 texel0 = texelFetch(instancesData, ivec2(0, y), 0);
-        vec4 texel1 = texelFetch(instancesData, ivec2(1, y), 0);
-        vec4 texel2 = texelFetch(instancesData, ivec2(2, y), 0);
-        
-        instances[y].position = texel0.rgb;
-        instances[y].materialId = int(texel0.a);
-        instances[y].modifier.type = int(texel1.r);
-        instances[y].modifier.smoothness = texel1.g;
-
-        instances[y].shape.type = int(texel1.b);
-        instances[y].shape.radius = texel1.a;
-        instances[y].shape.dimension = texel2.rgb;
-    }
+    int materialIndex = GetMaterialIndex(point);
+    return GetMaterial(materialIndex).color.rgb;
 }
 
 void main()
@@ -222,25 +216,24 @@ void main()
     vec2 uv = (gl_FragCoord.xy -.5 * resolution.xy) / resolution.y;
     mat3 matrix = calcLookAtMatrix(camPos, camLookAt, 0.);
 
-    loadMaterials();
-    loadInstances();
+    materialCount = textureSize(materialsData, 0).y;
+    instanceCount = textureSize(instancesData, 0).y;
 
     vec3 rd = normalize(matrix * vec3(uv.x, uv.y, 1.));
 
-    vec2 distMat = RayMarch(camPos, rd);
-    vec3 point = camPos + rd * distMat.x;
-
+    float dist = RayMarch(camPos, rd);
+    vec3 point = camPos + rd * dist;
 
     float dif = GetLight(point);
     
     vec3 col = texture(u_skybox, rd).rgb;
 
-    if (distMat.x < MAX_DIST)
+    if (dist < MAX_DIST)
     {
         vec3 normal = GetNormal(point);
         vec3 reflectDir = reflect(rd, normal);
         vec3 reflectSkyboxColor = texture(u_skybox, reflectDir).rgb;
-        col = GetMaterial(distMat, reflectSkyboxColor) * dif;
+        col = GetColor(point, reflectSkyboxColor) * dif;
     }
     
     col = pow(col, vec3(.4545));	// gamma correction

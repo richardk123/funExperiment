@@ -29,13 +29,18 @@ export class Application
 
         scene.addMaterial("blue", new Color(0, 0, 1, 1));
         scene.addMaterial("red", new Color(1, 0, 0, 1));
+        scene.addMaterial("green", new Color(0, 1, 0, 1));
         scene
             .addInstance(new Position(3, 0, 2), "blue")
-            .setModifier(new Modifier(ModifierType.SMOOTH, 0.2))
+            .setModifier(new Modifier(ModifierType.EXACT))
             .createAsCubeShape(new V3(1, 1, 1));
         scene
             .addInstance(new Position(0, 1, 2), "red")
-            .setModifier(new Modifier(ModifierType.SMOOTH, 0.2))
+            .setModifier(new Modifier(ModifierType.EXACT))
+            .createAsSphereShape(1);
+        scene
+            .addInstance(new Position(-3, 1, 2), "green")
+            .setModifier(new Modifier(ModifierType.SMOOTH, 1))
             .createAsSphereShape(1);
 
         this.mainLoop(engine, 0);

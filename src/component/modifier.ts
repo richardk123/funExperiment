@@ -1,7 +1,7 @@
 export class Modifier
 {
     public type: ModifierType;
-    public smoothness = 0;
+    public smoothness = 0.001;
 
     constructor(type: ModifierType, smoothness?: number)
     {
