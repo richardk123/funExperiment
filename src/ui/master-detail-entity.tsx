@@ -22,8 +22,16 @@ export class MasterDetail extends React.Component<MasterDetailData, {selected: E
     {
         return (
             <div>
-                <TreeEntity entities={this.props.entities} onSelect={id => this.selectEntity(id)} />
-                <FormEntity entity={this.state.selected} />
+                <div className="card">
+                    <div className="body">
+                        <TreeEntity entities={this.props.entities} onSelect={id => this.selectEntity(id)} />
+                    </div>
+                </div>
+                <div className="card">
+                    <div className="body">
+                        <FormEntity entity={this.state.selected} />
+                    </div>
+                </div>
             </div>
         );
     }

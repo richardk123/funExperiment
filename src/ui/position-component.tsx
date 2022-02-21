@@ -16,10 +16,22 @@ export class PositionComponent extends React.Component<PositionProps>
                 {
                     this.props.position != undefined ? 
                     <div>
-                        <span>Position:</span>
-                        <span><NumberInput title="X:" value={this.props.position.x} onChange={(val) => this.props.position.x = val} /></span>
-                        <span><NumberInput title="Y:" value={this.props.position.y} onChange={(val) => this.props.position.y = val} /></span>
-                        <span><NumberInput title="Z:" value={this.props.position.z} onChange={(val) => this.props.position.z = val} /></span>
+                        <label className="form-label">Position:</label>
+                        <div className="input-group">
+                            <div className="col-auto">
+                                <label className="form-label">X:</label>
+                                <NumberInput id="posX" value={this.props.position.x} onChange={(val) => this.props.position.x = val} />
+                            </div>
+                            <div className="col-auto">
+                                <label className="form-label">Y:</label>
+                                <NumberInput id="posY" value={this.props.position.y} onChange={(val) => this.props.position.y = val} />
+                            </div>
+                            <div className="col-auto">
+                                <label className="form-label">Z:</label>
+                                <NumberInput id="posZ" value={this.props.position.z} onChange={(val) => this.props.position.z = val} />
+                            </div>
+                        </div>
+                        
                     </div> : ""
                 }
             </div>

@@ -22,6 +22,14 @@ module.exports = {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
       },
+      {
+        test: /\.(scss)$/,
+        use: [
+          { loader: 'style-loader' }, 
+          { loader: 'css-loader' }, 
+          { loader: 'postcss-loader' }, 
+          { loader: 'sass-loader' }]
+      }
     ]
   },
   resolve: {

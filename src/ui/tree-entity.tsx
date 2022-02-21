@@ -31,7 +31,7 @@ export class TreeEntity extends React.Component<TreeData>
 
         return (
             <div>
-                <Tree nodes={data} onSelect={this.select} />
+                <Tree nodes={data} onSelect={this.select} theme="light" />
             </div>
         );
     }

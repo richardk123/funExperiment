@@ -14,13 +14,10 @@ export class NumberInput extends React.Component<InputData, {value: string}>
     render(): React.ReactNode 
     {
         return (
-            <div>
-                <span>{this.props.title}</span>
-                <input type="text" value={this.state.value} 
-                    onChange={this.handleChangeEvent}
-                    onClick={this.preventDefault} 
-                    onKeyPress={this.handleEnter}/>
-            </div>
+            <input type="text" id={this.props.id} value={this.state.value} 
+                onChange={this.handleChangeEvent}
+                onClick={this.preventDefault} 
+                onKeyPress={this.handleEnter}/>
         );
     }
 
@@ -58,5 +55,5 @@ interface InputData
 {
     value: number;
     onChange: (val: number) => void;
-    title: string;
+    id: string;
 }
