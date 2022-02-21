@@ -3,6 +3,7 @@ import { V3 } from "../component/base/v3";
 import { Color } from "../component/color";
 import { MaterialId } from "../component/material-id";
 import { Modifier, ModifierType } from "../component/modifier";
+import { Name } from "../component/name";
 import { ObjectType } from "../component/object-type";
 import { Position } from "../component/position";
 import { Rotation } from "../component/rotation";
@@ -17,15 +18,16 @@ export class Scene
         this._engine = engine;
     }
 
-    public addInstance(position: Position, materialName: string): InstanceBuilder
+    public addInstance(name: string, position: Position, materialName: string): InstanceBuilder
     {
-        return new InstanceBuilder(this._engine, position, this, materialName);
+        return new InstanceBuilder(this._engine, position, this, materialName, name);
     }
 
     public addMaterial(materialName: string, color: Color)
     {
         const entity = new Entity();
         entity.add(new MaterialId(materialName));
+        entity.add(new Name("material-" + materialName))
         entity.add(color);
         entity.add(ObjectType.MATERIAL);
         this._engine.addEntity(entity);
@@ -38,11 +40,12 @@ export class InstanceBuilder
     private _entity: Entity;
     private _scene: Scene;
 
-    constructor(engine: Engine, position: Position, scene: Scene, materialName: string)
+    constructor(engine: Engine, position: Position, scene: Scene, materialName: string, name: string)
     {
         this._engine = engine;
         this._entity = new Entity();
         this._entity.add(position);
+        this._entity.add(new Name(name));
         this._entity.add(ObjectType.INSTANCE);
         this._entity.add(new Modifier(ModifierType.EXACT));
         this._entity.add(new MaterialId(materialName))

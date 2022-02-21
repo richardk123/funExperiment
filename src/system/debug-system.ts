@@ -1,24 +1,21 @@
 import { System } from "tick-knock";
-import { EyePosition } from "../component/camera/eye-pos";
-import { LookAtPosition } from "../component/camera/look-at";
 import { QueryHolder } from "../common/query-holder";
 import { DebugRenderer } from "../ui/debug-renderer";
 
 export class DebugSystem extends System
 {
+    private debugRenderer = new DebugRenderer();
 
     onAddedToEngine(): void 
     {
-        const cameraPerspective = QueryHolder.cameraQuery.first;
-        const cameraPos = cameraPerspective.get(EyePosition);
-        const cameraLookAt = cameraPerspective.get(LookAtPosition);
+        const entities = QueryHolder.all.entities;
 
-        DebugRenderer.renderCameraStats(cameraPos, cameraLookAt);
+        this.debugRenderer.renderEntities(entities);
     }
 
     update(dt: number): void 
     {
         const fps = (1000 / dt).toFixed(0);
-        DebugRenderer.renderFps(fps);
+        this.debugRenderer.renderFps(fps);
     }
 }

@@ -1,11 +1,13 @@
 import { Entity, System } from "tick-knock";
-import { EyePosition } from "../component/camera/eye-pos";
 import { LookAtPosition } from "../component/camera/look-at";
 import { ObjectType } from "../component/object-type";
 import { QueryHolder } from "../common/query-holder";
+import { Name } from "../component/name";
+import { Position } from "../component/position";
 
-export class PerspectiveCameraSystem extends System
+export class CameraSystem extends System
 {
+    time = 0;
     public constructor()
     {
         super();
@@ -14,7 +16,8 @@ export class PerspectiveCameraSystem extends System
     onAddedToEngine(): void 
     {
         const perspectiveCamera = new Entity()
-        .add(new EyePosition(0.5, 7.5, -10))
+        .add(new Name("Camera"))
+        .add(new Position(0.5, 7.5, -10))
         .add(new LookAtPosition(0, 0, 0))
         .add(ObjectType.CAMERA);
     
@@ -26,8 +29,10 @@ export class PerspectiveCameraSystem extends System
         
     }
 
-    public update(): void 
+    public update(dt: number): void 
     {
+        this.time += dt;
         const camera = QueryHolder.cameraQuery.first;
+        camera.get(Position).y = Math.sin(this.time / 10);
     }
 }

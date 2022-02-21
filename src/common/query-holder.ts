@@ -3,6 +3,7 @@ import { ObjectType } from "../component/object-type";
 
 export class QueryHolder
 {
+    static readonly all = new QueryBuilder().build();
     static readonly sunQuery = new QueryBuilder().contains(ObjectType.SUN).build();
     static readonly cameraQuery = new QueryBuilder().contains(ObjectType.CAMERA).build();
     static readonly instanceQuery = new QueryBuilder().contains(ObjectType.INSTANCE).build();
@@ -14,6 +15,7 @@ export class QueryHolder
 
     static addQueries(engine: Engine)
     {
+        engine.addQuery(this.all);
         engine.addQuery(this.sunQuery);
         engine.addQuery(this.cameraQuery);
         engine.addQuery(this.instanceQuery);

@@ -34,12 +34,15 @@
     "webpack-dev-server": "^4.7.2"
   },
   "dependencies": {
+    "@naisutech/react-tree": "^2.0.12",
     "@types/bezier-js": "^4.1.0",
     "@types/jest": "^27.4.0",
     "@types/react": "^17.0.39",
+    "@types/react-color": "^3.0.6",
     "@types/react-dom": "^17.0.11",
     "bezier-js": "^6.1.0",
     "react": "^17.0.2",
+    "react-color": "^2.19.3",
     "react-dom": "^17.0.2",
     "tick-knock": "^4.0.2",
     "vector2d": "^3.0.0"

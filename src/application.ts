@@ -3,7 +3,7 @@ import {RendererOpengl} from "./renderer/renderer-opengl";
 import { RendererSystem } from "./system/renderer-system";
 import { QueryHolder } from "./common/query-holder";
 import { DebugSystem } from "./system/debug-system";
-import { PerspectiveCameraSystem } from "./system/perspective-camera-system";
+import { CameraSystem } from "./system/camera-system";
 import { Scene } from "./common/scene";
 import { Color } from "./component/color";
 import { Position } from "./component/position";
@@ -17,31 +17,31 @@ export class Application
         const engine = new Engine();
         QueryHolder.addQueries(engine);
 
-        const rendererSystem = new RendererSystem(new RendererOpengl());
-        const perspectiveCameraSystem = new PerspectiveCameraSystem();
-        const debugSystem = new DebugSystem();
-
-        engine.addSystem(perspectiveCameraSystem);
-        engine.addSystem(debugSystem);
-        engine.addSystem(rendererSystem);
-
         const scene = new Scene(engine);
 
         scene.addMaterial("blue", new Color(0, 0, 1, 1));
         scene.addMaterial("red", new Color(1, 0, 0, 1));
         scene.addMaterial("green", new Color(0, 1, 0, 1));
         scene
-            .addInstance(new Position(3, 0, 2), "blue")
+            .addInstance("cube", new Position(3, 0, 2), "blue")
             .setModifier(new Modifier(ModifierType.EXACT))
             .createAsCubeShape(new V3(1, 1, 1));
         scene
-            .addInstance(new Position(0, 1, 2), "red")
+            .addInstance("sphere1", new Position(0, 1, 2), "red")
             .setModifier(new Modifier(ModifierType.EXACT))
             .createAsSphereShape(1);
         scene
-            .addInstance(new Position(-3, 1, 2), "green")
+            .addInstance("sphere2", new Position(-3, 1, 2), "green")
             .setModifier(new Modifier(ModifierType.SMOOTH, 1))
             .createAsSphereShape(1);
+
+        const rendererSystem = new RendererSystem(new RendererOpengl());
+        const perspectiveCameraSystem = new CameraSystem();
+        const debugSystem = new DebugSystem();
+
+        engine.addSystem(perspectiveCameraSystem);
+        engine.addSystem(debugSystem);
+        engine.addSystem(rendererSystem);
 
         this.mainLoop(engine, 0);
     }
