@@ -19,30 +19,30 @@ in vec2 v_uv;
 
 out vec4 outColor;
 
-struct material
+struct Material
 {
     vec4 color;
 };
 
-struct modifier
+struct Modifier
 {
     int type;
     float smoothness;
 };
 
-struct shape
+struct Shape
 {
     int type;
     vec3 dimension;
     float radius;
 };
 
-struct instance
+struct Instance
 {
     vec3 position;
     int materialId;
-    modifier modifier;
-    shape shape;
+    Modifier modifier;
+    Shape shape;
 };
 
 int instanceCount;
@@ -73,12 +73,12 @@ float sdCapsule(vec3 point, vec3 a, vec3 b, float r)
     return length( pa - ba*h ) - r;
 }
 
-instance GetInstance(int index)
+Instance GetInstance(int index)
 {
     vec4 texel0 = texelFetch(instancesData, ivec2(0, index), 0);
     vec4 texel1 = texelFetch(instancesData, ivec2(1, index), 0);
     vec4 texel2 = texelFetch(instancesData, ivec2(2, index), 0);
-    instance instance;
+    Instance instance;
     instance.position = texel0.rgb;
     instance.materialId = int(texel0.a);
     instance.modifier.type = int(texel1.r);
@@ -90,9 +90,9 @@ instance GetInstance(int index)
     return instance;
 }
 
-material GetMaterial(int index)
+Material GetMaterial(int index)
 {
-    material material;
+    Material material;
     material.color = texelFetch(materialsData, ivec2(0, index), 0);
     return material;
 }
@@ -106,7 +106,7 @@ int GetMaterialIndex(vec3 point)
 
     for (int i = 0; i < instanceCount; i++)
     {
-        instance instance = GetInstance(i);
+        Instance instance = GetInstance(i);
         
         if (instance.shape.type == 0) // box
         {
@@ -135,7 +135,7 @@ float GetDistance(vec3 point)
     
     for (int i = 0; i < instanceCount; i++)
     {
-        instance instance = GetInstance(i);
+        Instance instance = GetInstance(i);
         
         if (instance.shape.type == 0) // box
         {
