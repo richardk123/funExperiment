@@ -8,7 +8,6 @@ import { WebglUtils } from "../webgl-utils";
 
 export class InstanceRenderer
 {
-
     readonly render: (program: WebGLProgram, instances: ReadonlyArray<Entity>, materials: ReadonlyArray<Entity>) => void;
 
     constructor(gl: WebGL2RenderingContext)

@@ -15,24 +15,30 @@ export class PositionComponent extends React.Component<PositionProps>
             <div>
                 {
                     this.props.position != undefined ? 
-                    <div>
-                        <label className="form-label">Position:</label>
-                        <div className="input-group">
-                            <div className="col-auto">
-                                <label className="form-label">X:</label>
-                                <NumberInput id="posX" value={this.props.position.x} onChange={(val) => this.props.position.x = val} />
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-md-3"><label className="form-label">Position:</label></div>
+                            <div className="col">
+                                <div className="input-group">
+                                    <div className="input-group-text">X:</div>
+                                    <NumberInput value={this.props.position.x} onChange={(val) => this.props.position.x = val} />
+                                </div>
                             </div>
-                            <div className="col-auto">
-                                <label className="form-label">Y:</label>
-                                <NumberInput id="posY" value={this.props.position.y} onChange={(val) => this.props.position.y = val} />
+                            <div className="col">
+                                <div className="input-group">
+                                    <div className="input-group-text">Y:</div>
+                                    <NumberInput value={this.props.position.y} onChange={(val) => this.props.position.y = val} />
+                                </div>
                             </div>
-                            <div className="col-auto">
-                                <label className="form-label">Z:</label>
-                                <NumberInput id="posZ" value={this.props.position.z} onChange={(val) => this.props.position.z = val} />
+                            <div className="col">
+                                <div className="input-group">
+                                    <div className="input-group-text">Z:</div>
+                                    <NumberInput value={this.props.position.z} onChange={(val) => this.props.position.z = val} />
+                                </div>
                             </div>
-                        </div>
-                        
-                    </div> : ""
+                        </div> 
+                    </div> 
+                    : ""
                 }
             </div>
 

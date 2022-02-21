@@ -14,7 +14,8 @@ export class NumberInput extends React.Component<InputData, {value: string}>
     render(): React.ReactNode 
     {
         return (
-            <input type="text" id={this.props.id} value={this.state.value} 
+            <input type="text" value={this.state.value} 
+                className="form-control"
                 onChange={this.handleChangeEvent}
                 onClick={this.preventDefault} 
                 onKeyPress={this.handleEnter}/>
@@ -55,5 +56,4 @@ interface InputData
 {
     value: number;
     onChange: (val: number) => void;
-    id: string;
 }

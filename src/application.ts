@@ -35,7 +35,8 @@ export class Application
             .setModifier(new Modifier(ModifierType.SMOOTH, 1))
             .createAsSphereShape(1);
 
-        const rendererSystem = new RendererSystem(new RendererOpengl());
+
+        const rendererSystem = new RendererSystem();
         const perspectiveCameraSystem = new CameraSystem();
         const debugSystem = new DebugSystem();
 

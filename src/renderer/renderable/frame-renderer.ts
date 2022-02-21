@@ -24,7 +24,6 @@ export class FrameRenderer
             gl.enableVertexAttribArray(positionAttribLocation);
             gl.vertexAttribPointer(positionAttribLocation, 2, gl.FLOAT, false, 0, 0);
 
-
             gl.drawArrays(gl.TRIANGLES, 0, 6);
         }
     }

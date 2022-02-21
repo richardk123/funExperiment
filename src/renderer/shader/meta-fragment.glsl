@@ -1,7 +1,7 @@
 #version 300 es
 #define MAX_STEPS 100
-#define MAX_DIST 30.
-#define SURF_DIST .0001
+#define MAX_DIST 1000.
+#define SURF_DIST .01
 #define RESOLUTION_X 1024
 #define RESOLUTION_Y 768
 #define MAX_OBJECT_COUNT 10

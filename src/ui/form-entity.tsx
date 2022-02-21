@@ -17,11 +17,11 @@ export class FormEntity extends React.Component<FormData>
             <div>
                 {
                     this.props.entity ? 
-                    <form className="entity-form">
+                    <div>
                         {this.props.entity.id}
                         <PositionComponent position={this.props.entity.get(Position)}/>
                         <ColorComponent color={this.props.entity.get(Color)}/>
-                    </form>
+                    </div>
                     : ""
                 }
 

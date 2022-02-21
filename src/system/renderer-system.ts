@@ -5,9 +5,12 @@ import { RendererOpengl } from "../renderer/renderer-opengl";
 
 export class RendererSystem extends System
 {
-    public constructor(public renderer: RendererOpengl)
+    private renderer = new RendererOpengl();
+    
+    public constructor()
     {
         super();
+        this.renderer = new RendererOpengl();
     }
 
     onAddedToEngine(): void 
