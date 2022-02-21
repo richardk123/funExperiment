@@ -6,7 +6,7 @@ import { Modifier, ModifierType } from "../component/modifier";
 import { ObjectType } from "../component/object-type";
 import { Position } from "../component/position";
 import { Rotation } from "../component/rotation";
-import { ShapeCube, ShapeSphere } from "../component/shape";
+import { Shape, ShapeType } from "../component/shape";
 
 export class Scene
 {
@@ -63,14 +63,14 @@ export class InstanceBuilder
 
     public createAsCubeShape(dimension: V3): Scene
     {
-        this._entity.add(new ShapeCube(dimension).asShape());
+        this._entity.add(new Shape(ShapeType.BOX, 0, dimension));
         this._engine.addEntity(this._entity);
         return this._scene;
     }
 
     public createAsSphereShape(radius: number): Scene
     {
-        this._entity.add(new ShapeSphere(radius).asShape());
+        this._entity.add(new Shape(ShapeType.SPHERE, radius, new V3(0, 0, 0)));
         this._engine.addEntity(this._entity);
         return this._scene;
     }

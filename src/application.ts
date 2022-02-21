@@ -6,6 +6,9 @@ import { DebugSystem } from "./system/debug-system";
 import { PerspectiveCameraSystem } from "./system/perspective-camera-system";
 import { Scene } from "./common/scene";
 import { Color } from "./component/color";
+import { Position } from "./component/position";
+import { V3 } from "./component/base/v3";
+import { Modifier, ModifierType } from "./component/modifier";
 
 export class Application
 {
@@ -25,6 +28,15 @@ export class Application
         const scene = new Scene(engine);
 
         scene.addMaterial("blue", new Color(0, 0, 1, 1));
+        scene.addMaterial("red", new Color(1, 0, 0, 1));
+        scene
+            .addInstance(new Position(3, 0, 2), "blue")
+            .setModifier(new Modifier(ModifierType.SMOOTH, 0.2))
+            .createAsCubeShape(new V3(1, 1, 1));
+        scene
+            .addInstance(new Position(0, 1, 2), "red")
+            .setModifier(new Modifier(ModifierType.SMOOTH, 0.2))
+            .createAsSphereShape(1);
 
         this.mainLoop(engine, 0);
     }

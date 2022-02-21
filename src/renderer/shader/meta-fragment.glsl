@@ -13,6 +13,7 @@ uniform vec3 camLookAt;
 
 uniform samplerCube u_skybox;
 uniform sampler2D materialsData;
+uniform sampler2D instancesData;
 
 in vec2 v_uv;
 
@@ -28,7 +29,31 @@ struct material
     vec4 color;
 };
 
-material[5] materials;
+struct modifier
+{
+    int type;
+    float smoothness;
+};
+
+struct shape
+{
+    int type;
+    vec3 dimension;
+    float radius;
+};
+
+struct instance
+{
+    vec3 position;
+    int materialId;
+    modifier modifier;
+    shape shape;
+};
+
+material[50] materials;
+instance[50] instances;
+int instanceCount;
+int materialCount;
 
 
 float smin(float a, float b, float k)
@@ -55,21 +80,35 @@ float sdCapsule(vec3 point, vec3 a, vec3 b, float r)
     return length( pa - ba*h ) - r;
 }
 
+struct distMat
+{
+    float distance;
+    int material;
+};
+
 vec2 GetDistMat(vec3 point)
 {
-    float planeDist = point.y;
-    float boxDist = sdBox(point + vec3(3, 0, 2), vec3(1));
-
-    float dist = min(boxDist, planeDist);
+    float dist = MAX_DIST;
+    float distCur = MAX_DIST + 1.;
     int mat = MAT_DEFAULT;
+    
+    for (int i = 0; i < instanceCount; i++)
+    {
+        if (instances[i].shape.type == 0) // box
+        {
+            distCur = sdBox(point + instances[i].position, instances[i].shape.dimension);
+        }
+        else if (instances[i].shape.type == 1) // sphere
+        {
+            distCur = sdSphere(point + instances[i].position, instances[i].shape.radius);
+        }
 
-    if (dist == boxDist)
-    {
-        mat = MAT_BOX;
-    }
-    else if (dist == planeDist)
-    {
-        mat = MAT_PLANE;
+        dist = min(dist, distCur);
+
+        if (distCur == dist)
+        {
+            mat = instances[i].materialId;
+        }
     }
 
     return vec2(dist, mat);
@@ -130,32 +169,50 @@ mat3 calcLookAtMatrix(vec3 origin, vec3 target, float roll) {
 
 vec3 GetMaterial(vec2 distMat, vec3 skyboxColor)
 {
-    int mat = int(distMat.y);
+    return materials[int(distMat.y)].color.rgb;
 
-    if (mat == MAT_DEFAULT)
-    {
-        return vec3(1, 1, 1);
-    }
-    else if (mat == MAT_BOX)
-    {
-        return materials[0].color.rgb;
-    }
-    else if (mat == MAT_SNAKE)
-    {
-        return skyboxColor;
-    }
-    else if (mat == MAT_PLANE)
-    {
-        return skyboxColor * 0.9 * vec3(1, 0, 1);
-    }
+
+    // else if (mat == MAT_BOX)
+    // {
+    //     return materials[0].color.rgb;
+    // }
+    // else if (mat == MAT_SNAKE)
+    // {
+    //     return skyboxColor;
+    // }
+    // else if (mat == MAT_PLANE)
+    // {
+    //     return skyboxColor * 0.9 * vec3(1, 0, 1);
+    // }
 }
 
 void loadMaterials()
 {
     ivec2 size = textureSize(materialsData, 0);
-
+    materialCount = size.y;
     for (int y = 0; y < size.y; ++y) {
         materials[y].color = texelFetch(materialsData, ivec2(0, y), 0);
+    }
+}
+
+void loadInstances()
+{
+    ivec2 size = textureSize(instancesData, 0);
+    instanceCount = size.y;
+    for (int y = 0; y < size.y; ++y) 
+    {
+        vec4 texel0 = texelFetch(instancesData, ivec2(0, y), 0);
+        vec4 texel1 = texelFetch(instancesData, ivec2(1, y), 0);
+        vec4 texel2 = texelFetch(instancesData, ivec2(2, y), 0);
+        
+        instances[y].position = texel0.rgb;
+        instances[y].materialId = int(texel0.a);
+        instances[y].modifier.type = int(texel1.r);
+        instances[y].modifier.smoothness = texel1.g;
+
+        instances[y].shape.type = int(texel1.b);
+        instances[y].shape.radius = texel1.a;
+        instances[y].shape.dimension = texel2.rgb;
     }
 }
 
@@ -166,6 +223,7 @@ void main()
     mat3 matrix = calcLookAtMatrix(camPos, camLookAt, 0.);
 
     loadMaterials();
+    loadInstances();
 
     vec3 rd = normalize(matrix * vec3(uv.x, uv.y, 1.));
 

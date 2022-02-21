@@ -1,12 +1,15 @@
 export class Modifier
 {
     public type: ModifierType;
-    private smoothness: number;
+    public smoothness = 0;
 
     constructor(type: ModifierType, smoothness?: number)
     {
         this.type = type;
-        this.smoothness = smoothness;
+        if (smoothness)
+        {
+            this.smoothness = smoothness;
+        }
     }
 
 }
