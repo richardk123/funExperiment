@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Entity } from "tick-knock";
 import { Color } from "../component/color";
-import { ModifierType } from "../component/modifier";
+import { Modifier, ModifierType } from "../component/modifier";
 import { Position } from "../component/position";
 import { Reflection } from "../component/reflection";
 import { ColorComponent } from "./component/color-component";
+import { ModifierComponent } from "./component/modifier-component";
 import { PositionComponent } from "./component/position-component";
 import { ReflectionComponent } from "./component/reflection-component";
 import { EnumSelect } from "./primitive/enum-select";
@@ -34,7 +35,7 @@ export class FormEntity extends React.Component<FormData>
                         <PositionComponent position={this.props.entity.get(Position)}/>
                         <ColorComponent color={this.props.entity.get(Color)}/>
                         <ReflectionComponent reflection={this.props.entity.get(Reflection)} />
-                        <EnumSelect type={ModifierType} value={ModifierType.SMOOTH} onChange={(val) => console.log(val)}/>
+                        <ModifierComponent modifier={this.props.entity.get(Modifier)} />
                     </div>
                     : ""
                 }

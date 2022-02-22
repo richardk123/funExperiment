@@ -22,11 +22,13 @@ export class NumberInput extends React.Component<InputData, {value: string}>
         );
     }
 
-    componentDidUpdate(prevProps) {
-        if(prevProps.value !== this.props.value) {
+    componentDidUpdate(prevProps) 
+    {
+        if(prevProps.value !== this.props.value) 
+        {
           this.setState({value: this.props.value?.toString()});
         }
-      }
+    }
 
     handleEnter(e: React.KeyboardEvent<HTMLInputElement>): void
     {
