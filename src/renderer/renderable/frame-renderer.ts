@@ -1,5 +1,5 @@
 import { Entity } from "tick-knock";
-import { Shape } from "../shape";
+import { Shape } from "../shape-definition";
 import { WebglUtils } from "../webgl-utils";
 
 export class FrameRenderer

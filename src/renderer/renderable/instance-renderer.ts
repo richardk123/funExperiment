@@ -3,6 +3,7 @@ import { Color } from "../../component/color";
 import { MaterialId } from "../../component/material-id";
 import { Modifier } from "../../component/modifier";
 import { Position } from "../../component/position";
+import { Reflection } from "../../component/reflection";
 import { Shape } from "../../component/shape";
 import { WebglUtils } from "../webgl-utils";
 
@@ -57,7 +58,9 @@ export class InstanceRenderer
             data[baseIndex + 0] = color.r;
             data[baseIndex + 1] = color.g;
             data[baseIndex + 2] = color.b;
-            data[baseIndex + 3] = color.a;
+
+            const reflection = material.get(Reflection);
+            data[baseIndex + 3] = reflection.value;
         });
 
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 8);

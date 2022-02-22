@@ -3,8 +3,8 @@ import * as ReactDOM from "react-dom";
 import { Entity } from "tick-knock";
 import { FormEntity } from "./form-entity";
 import { MasterDetail } from "./master-detail-entity";
+import { ValueComponent } from "./primitive/value-text";
 import { TreeEntity } from "./tree-entity";
-import { ValueComponent } from "./value-component";
 
 export class DebugRenderer
 {

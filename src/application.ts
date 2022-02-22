@@ -19,9 +19,9 @@ export class Application
 
         const scene = new Scene(engine);
 
-        scene.addMaterial("blue", new Color(0, 0, 1, 1));
-        scene.addMaterial("red", new Color(1, 0, 0, 1));
-        scene.addMaterial("green", new Color(0, 1, 0, 1));
+        scene.addMaterial("blue", new Color(0, 0, 1, 1), 0);
+        scene.addMaterial("red", new Color(1, 0, 0, 1), 0);
+        scene.addMaterial("green", new Color(0, 1, 0, 1), 0.7);
         scene
             .addInstance("cube", new Position(3, 0, 2), "blue")
             .setModifier(new Modifier(ModifierType.EXACT))

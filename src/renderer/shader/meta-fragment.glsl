@@ -21,7 +21,8 @@ out vec4 outColor;
 
 struct Material
 {
-    vec4 color;
+    vec3 color;
+    float reflection;
 };
 
 struct Modifier
@@ -93,7 +94,10 @@ Instance GetInstance(int index)
 Material GetMaterial(int index)
 {
     Material material;
-    material.color = texelFetch(materialsData, ivec2(0, index), 0);
+    vec4 texel0 = texelFetch(materialsData, ivec2(0, index), 0);
+
+    material.color = texel0.rgb;
+    material.reflection = texel0.a;
     return material;
 }
 
@@ -207,7 +211,8 @@ mat3 calcLookAtMatrix(vec3 origin, vec3 target, float roll) {
 vec3 GetColor(vec3 point, vec3 skyboxColor)
 {
     int materialIndex = GetMaterialIndex(point);
-    return GetMaterial(materialIndex).color.rgb;
+    Material material = GetMaterial(materialIndex);
+    return skyboxColor * material.reflection + material.color;
 }
 
 void main()

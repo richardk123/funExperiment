@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Position } from "../component/position";
-import { NumberInput } from "./number-input";
+import { Position } from "../../component/position";
+import { NumberInput } from "../primitive/number-input";
 
 export class PositionComponent extends React.Component<PositionProps>
 {
@@ -17,7 +17,7 @@ export class PositionComponent extends React.Component<PositionProps>
                     this.props.position != undefined ? 
                     <div className="container">
                         <div className="row">
-                            <div className="col-md-3"><label className="form-label">Position:</label></div>
+                            <div className="col-md-2"><label className="form-label">Position:</label></div>
                             <div className="col">
                                 <div className="input-group">
                                     <div className="input-group-text">X:</div>
@@ -41,10 +41,7 @@ export class PositionComponent extends React.Component<PositionProps>
                     : ""
                 }
             </div>
-
         );
-
-
     }
 }
 

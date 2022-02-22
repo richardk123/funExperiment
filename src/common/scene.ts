@@ -6,6 +6,7 @@ import { Modifier, ModifierType } from "../component/modifier";
 import { Name } from "../component/name";
 import { ObjectType } from "../component/object-type";
 import { Position } from "../component/position";
+import { Reflection } from "../component/reflection";
 import { Rotation } from "../component/rotation";
 import { Shape, ShapeType } from "../component/shape";
 
@@ -23,12 +24,13 @@ export class Scene
         return new InstanceBuilder(this._engine, position, this, materialName, name);
     }
 
-    public addMaterial(materialName: string, color: Color)
+    public addMaterial(materialName: string, color: Color, reflection: number)
     {
         const entity = new Entity();
         entity.add(new MaterialId(materialName));
         entity.add(new Name("material-" + materialName))
         entity.add(color);
+        entity.add(new Reflection(reflection))
         entity.add(ObjectType.MATERIAL);
         this._engine.addEntity(entity);
     }
