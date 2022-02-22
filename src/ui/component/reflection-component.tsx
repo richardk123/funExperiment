@@ -15,7 +15,7 @@ export class ReflectionComponent extends React.Component<ReflectionProps>
             <div>
                 {
                     this.props.reflection != undefined ? 
-                        <div className="row">
+                        <div className="row mt-1">
                             <div className="col-md-2"><label className="form-label">Reflection:</label></div>
                             <div className="col">
                                 <div className="input-group input-group-sm">

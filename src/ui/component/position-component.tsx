@@ -15,11 +15,11 @@ export class PositionComponent extends React.Component<PositionProps>
             <div>
                 {
                     this.props.position != undefined ? 
-                        <div className="row">
+                        <div className="row mt-1">
                             <div className="col-md-2"><label className="form-label">Position:</label></div>
                             <div className="col">
                                 <div className="row">
-                                    <div className="col-sm-3">
+                                    <div className="col-sm-3 position-x">
                                         <div className="input-group input-group-sm">
                                             <div className="input-group-text">X:</div>
                                             <NumberInput value={this.props.position.x} onChange={(val) => this.props.position.x = val} />

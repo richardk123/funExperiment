@@ -32,7 +32,7 @@ export class ColorComponent extends React.Component<ColorProps, {r: number, b: n
             <div>
                 {
                     this.props.color != undefined ? 
-                        <div className="row">
+                        <div className="row mt-1">
                             <div className="col-md-2"><label className="form-label">Color:</label></div>
                             <div className="col">
                                 <div className="input-group">

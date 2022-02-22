@@ -23,6 +23,10 @@ module.exports = {
         type: 'asset/resource',
       },
       {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+      {
         test: /\.(scss)$/,
         use: [
           { loader: 'style-loader' }, 
