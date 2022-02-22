@@ -15,16 +15,14 @@ export class ReflectionComponent extends React.Component<ReflectionProps>
             <div>
                 {
                     this.props.reflection != undefined ? 
-                    <div className="container">
                         <div className="row">
                             <div className="col-md-2"><label className="form-label">Reflection:</label></div>
                             <div className="col">
-                                <div className="input-group">
+                                <div className="input-group input-group-sm">
                                     <SliderInput min={0.0} max={1.0} step={0.01} value={this.props.reflection.value} onChange={(value) => this.props.reflection.value = value} />
                                 </div>
                             </div>
                         </div> 
-                    </div> 
                     : ""
                 }
             </div>

@@ -8,8 +8,6 @@ import { ColorComponent } from "./component/color-component";
 import { ModifierComponent } from "./component/modifier-component";
 import { PositionComponent } from "./component/position-component";
 import { ReflectionComponent } from "./component/reflection-component";
-import { EnumSelect } from "./primitive/enum-select";
-import { SliderInput } from "./primitive/slider-input";
 
 export class FormEntity extends React.Component<FormData>
 {
@@ -23,18 +21,21 @@ export class FormEntity extends React.Component<FormData>
 
         return (
             <div>
-                <div>
+            {
+                this.props.entity ? 
                     <div className="container">
                         <div className="row">
                             <div className="col-md-2"><label className="form-label">Id:</label></div>
                             <div className="col">{this.props.entity.id}</div>
                         </div>
+                        <PositionComponent position={this.props.entity.get(Position)}/>
+                        <ColorComponent color={this.props.entity.get(Color)}/>
+                        <ReflectionComponent reflection={this.props.entity.get(Reflection)} />
+                        <ModifierComponent modifier={this.props.entity.get(Modifier)} />
                     </div>
-                    <PositionComponent position={this.props.entity.get(Position)}/>
-                    <ColorComponent color={this.props.entity.get(Color)}/>
-                    <ReflectionComponent reflection={this.props.entity.get(Reflection)} />
-                    <ModifierComponent modifier={this.props.entity.get(Modifier)} />
-                </div>
+                    :
+                    null
+            }
             </div>
         );
     }

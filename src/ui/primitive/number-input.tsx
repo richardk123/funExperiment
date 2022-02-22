@@ -6,7 +6,6 @@ export class NumberInput extends React.Component<InputData, {value: string}>
     {
         super(props);
         this.handleChangeEvent = this.handleChangeEvent.bind(this);
-        this.preventDefault = this.preventDefault.bind(this);
         this.handleEnter = this.handleEnter.bind(this);
         this.state = {value: props.value?.toString()};
     }
@@ -17,7 +16,6 @@ export class NumberInput extends React.Component<InputData, {value: string}>
             <input type="text" value={this.state.value} 
                 className="form-control"
                 onChange={this.handleChangeEvent}
-                onClick={this.preventDefault} 
                 onKeyPress={this.handleEnter}/>
         );
     }
@@ -42,15 +40,7 @@ export class NumberInput extends React.Component<InputData, {value: string}>
 
     handleChangeEvent(e: React.ChangeEvent<HTMLInputElement>): void
     {
-        e.preventDefault();
-        e.stopPropagation();
         this.setState({value: e.target.value});
-    }
-
-    preventDefault(e: React.MouseEvent<HTMLElement>): void
-    {
-        e.preventDefault();
-        e.stopPropagation();
     }
 }
 

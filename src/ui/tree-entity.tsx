@@ -1,5 +1,6 @@
+import { Tree } from "antd";
+import { Key } from "antd/lib/table/interface";
 import * as React from "react";
-import Tree, { NodeId } from '@naisutech/react-tree'
 import { Entity } from "tick-knock";
 import { Name } from "../component/name";
 
@@ -11,7 +12,7 @@ export class TreeEntity extends React.Component<TreeData>
         this.select = this.select.bind(this);
     }
 
-    select(ids: NodeId[])
+    select(ids: Key[])
     {
         const id = ids[0] ? ids[0].toString() : null;
         this.props.onSelect(id);
@@ -26,12 +27,12 @@ export class TreeEntity extends React.Component<TreeData>
     {
         const data = this.props.entities.map(entity =>
         {
-            return {id : entity.id, parentId: null, label: this.getName(entity)}
+            return {key : entity.id, title: this.getName(entity)}
         });
 
         return (
             <div>
-                <Tree nodes={data} onSelect={this.select} theme="light" />
+                <Tree treeData={data} onSelect={this.select} />
             </div>
         );
     }

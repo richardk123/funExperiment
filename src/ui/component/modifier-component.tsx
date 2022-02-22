@@ -16,11 +16,11 @@ export class ModifierComponent extends React.Component<ModifierProps>
             <div>
                 {
                     this.props.modifier != undefined ? 
-                        <div className="container">
+                        <div className="row">
                             <div className="row">
                                 <div className="col-md-2"><label className="form-label">Modifier:</label></div>
                                 <div className="col">
-                                    <div className="input-group">
+                                    <div className="input-group input-group-sm">
                                         <div className="input-group-text">Type:</div>
                                         <EnumSelect type={ModifierType} value={this.props.modifier.type} onChange={(type) => this.props.modifier.type = type}/>
                                     </div>
@@ -29,8 +29,8 @@ export class ModifierComponent extends React.Component<ModifierProps>
                             <div className="row d-flex">
                                 <div className="col-md-2"></div>
                                 <div className="col">
-                                    <div className="d-flex">
-                                        <div className="input-group-text">Smooth:</div>
+                                    <div className="d-flex input-group-sm">
+                                        <div className="input-group-text">Smin:</div>
                                         <SliderInput min={0.0} max={5.0} step={0.01} value={this.props.modifier.smoothness} onChange={(value) => this.props.modifier.smoothness = value} />
                                     </div>
                                 </div>

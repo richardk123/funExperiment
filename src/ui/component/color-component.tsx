@@ -32,16 +32,14 @@ export class ColorComponent extends React.Component<ColorProps, {r: number, b: n
             <div>
                 {
                     this.props.color != undefined ? 
-                    <div className="container">
                         <div className="row">
-                        <div className="col-md-2"><label className="form-label">Color:</label></div>
+                            <div className="col-md-2"><label className="form-label">Color:</label></div>
                             <div className="col">
                                 <div className="input-group">
                                     <Hue className="color" color={ this.transformColor() } onChange={ this.handleChangeComplete } /> 
                                 </div>
                             </div>
                         </div> 
-                    </div> 
                     : ""
                 }
             </div>
