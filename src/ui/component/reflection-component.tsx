@@ -26,7 +26,6 @@ export class ReflectionComponent extends React.Component<ReflectionProps>
                     : ""
                 }
             </div>
-
         );
     }
 }

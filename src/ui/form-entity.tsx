@@ -8,6 +8,8 @@ import { ColorComponent } from "./component/color-component";
 import { ModifierComponent } from "./component/modifier-component";
 import { PositionComponent } from "./component/position-component";
 import { ReflectionComponent } from "./component/reflection-component";
+import {NameComponent} from "./component/name-component";
+import {Name} from "../component/name";
 
 export class FormEntity extends React.Component<FormData>
 {
@@ -28,6 +30,7 @@ export class FormEntity extends React.Component<FormData>
                             <div className="col-md-2"><label className="form-label">Id:</label></div>
                             <div className="col">{this.props.entity.id}</div>
                         </div>
+                        <NameComponent name={this.props.entity.get(Name)}/>
                         <PositionComponent position={this.props.entity.get(Position)}/>
                         <ColorComponent color={this.props.entity.get(Color)}/>
                         <ReflectionComponent reflection={this.props.entity.get(Reflection)} />
