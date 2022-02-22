@@ -150,7 +150,18 @@ float GetDistance(vec3 point)
             distCur = sdSphere(point + instance.position, instance.shape.radius);
         }
 
-        dist = smin(dist, distCur, instance.modifier.smoothness);
+        if (instance.modifier.type == 0)
+        {
+            dist = min(dist, distCur);
+        }
+        else if (instance.modifier.type == 1)
+        {
+            dist = max(dist, -distCur);
+        }
+        else if (instance.modifier.type == 2)
+        {
+            dist = smin(dist, distCur, instance.modifier.smoothness);
+        }
 
         mat = instance.materialId;
     }

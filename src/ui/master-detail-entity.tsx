@@ -8,11 +8,11 @@ export class MasterDetail extends React.Component<MasterDetailData, {selected: E
     constructor(props: MasterDetailData)
     {
         super(props);
-        this.selectEntity = this.selectEntity.bind(this);
         this.state = {selected: this.props.entities[0]};
+        this.selectEntity = this.selectEntity.bind(this);
     }
 
-    selectEntity = (id: string) => 
+    selectEntity(id: string)
     {
         const entities = this.props.entities.filter(entity => entity.id.toString() == id);
         this.setState({selected: entities ? entities[0] : null});
@@ -24,7 +24,7 @@ export class MasterDetail extends React.Component<MasterDetailData, {selected: E
             <div>
                 <div className="card">
                     <div className="body">
-                        <TreeEntity entities={this.props.entities} onSelect={id => this.selectEntity(id)} />
+                        <TreeEntity entities={this.props.entities} onSelect={this.selectEntity} />
                     </div>
                 </div>
                 <div className="card">

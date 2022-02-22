@@ -27,7 +27,7 @@ export class Application
             .setModifier(new Modifier(ModifierType.EXACT))
             .createAsCubeShape(new V3(1, 1, 1));
         scene
-            .addInstance("sphere1", new Position(0, 1, 2), "red")
+            .addInstance("sphere1", new Position(-1.5, 1, 2), "red")
             .setModifier(new Modifier(ModifierType.EXACT))
             .createAsSphereShape(1);
         scene
