@@ -3,7 +3,7 @@ import { Reflection } from "../../component/reflection";
 import { SliderInput } from "../primitive/slider-input";
 import {Name} from "../../component/name";
 
-export class NameComponent extends React.Component<ReflectionProps, {value: string}>
+export class NameComponent extends React.Component<ReflectionProps>
 {
     constructor(props: ReflectionProps)
     {
@@ -19,14 +19,6 @@ export class NameComponent extends React.Component<ReflectionProps, {value: stri
         this.setState({value: value});
     }
 
-    componentDidUpdate(prevProps)
-    {
-        if(prevProps.name !== this.props.name)
-        {
-            this.setState({value: this.props.name.name});
-        }
-    }
-
     render(): React.ReactNode
     {
         return (
@@ -39,7 +31,7 @@ export class NameComponent extends React.Component<ReflectionProps, {value: stri
                                 <div className="input-group input-group-sm">
                                     <input type="text"
                                            className="form-control"
-                                           value={this.state.value}
+                                           value={this.props.name.name}
                                            onChange={this.valueChange}/>
                                 </div>
                             </div>

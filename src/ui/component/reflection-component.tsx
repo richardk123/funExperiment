@@ -2,34 +2,24 @@ import * as React from "react";
 import { Reflection } from "../../component/reflection";
 import { SliderInput } from "../primitive/slider-input";
 
-export class ReflectionComponent extends React.Component<ReflectionProps, {value: number}>
+export class ReflectionComponent extends React.Component<ReflectionProps>
 {
     constructor(props: ReflectionProps)
     {
         super(props);
-        this.state = {value: props.reflection.value};
         this.reflectionChange = this.reflectionChange.bind(this);
     }
 
     reflectionChange(value: number)
     {
         this.props.reflection.value = value;
-        this.setState({value: value});
-    }
-
-    componentDidUpdate(prevProps)
-    {
-        if(prevProps.reflection?.value !== this.props.reflection?.value)
-        {
-            this.setState({value: this.props.reflection?.value});
-        }
     }
 
     render(): React.ReactNode 
     {
         return (
             this.props.reflection !== undefined ?
-                <SliderInput min={0.0} max={1.0} step={0.01} value={this.state.value} onChange={this.reflectionChange} />
+                <SliderInput min={0.0} max={1.0} step={0.01} value={this.props.reflection.value} onChange={this.reflectionChange} />
             : null
         );
     }

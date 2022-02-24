@@ -8,9 +8,11 @@ export class DebugSystem extends System
 
     onAddedToEngine(): void 
     {
-        const entities = QueryHolder.all.entities;
+        const instances = QueryHolder.instanceQuery.entities;
+        const cameras = QueryHolder.cameraQuery.entities;
 
-        this.debugRenderer.renderEntities(entities);
+        const result = [...cameras, ...instances];
+        this.debugRenderer.renderEntities(result);
     }
 
     update(dt: number): void 
