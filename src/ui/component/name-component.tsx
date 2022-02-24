@@ -8,7 +8,6 @@ export class NameComponent extends React.Component<ReflectionProps, {value: stri
     constructor(props: ReflectionProps)
     {
         super(props);
-
         this.valueChange = this.valueChange.bind(this);
         this.state = {value: props.name?.name};
     }
@@ -18,6 +17,14 @@ export class NameComponent extends React.Component<ReflectionProps, {value: stri
         const value = e.target.value;
         this.props.name.name = value;
         this.setState({value: value});
+    }
+
+    componentDidUpdate(prevProps)
+    {
+        if(prevProps.name !== this.props.name)
+        {
+            this.setState({value: this.props.name.name});
+        }
     }
 
     render(): React.ReactNode
@@ -37,7 +44,7 @@ export class NameComponent extends React.Component<ReflectionProps, {value: stri
                                 </div>
                             </div>
                         </div>
-                        : ""
+                        : null
                 }
             </div>
         );

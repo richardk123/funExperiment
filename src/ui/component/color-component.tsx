@@ -1,7 +1,6 @@
 import * as React from "react";
 import { ColorResult, RGBColor, SketchPicker } from "react-color";
 import Hue from "react-color/lib/components/hue/Hue";
-import Photoshop from "react-color/lib/components/photoshop/Photoshop";
 import { Color } from "../../component/color";
 
 export class ColorComponent extends React.Component<ColorProps, {r: number, b: number, g: number}>
@@ -29,20 +28,7 @@ export class ColorComponent extends React.Component<ColorProps, {r: number, b: n
     render(): React.ReactNode 
     {
         return (
-            <div>
-                {
-                    this.props.color != undefined ? 
-                        <div className="row mt-1">
-                            <div className="col-md-2"><label className="form-label">Color:</label></div>
-                            <div className="col">
-                                <div className="input-group">
-                                    <Hue className="color" color={ this.transformColor() } onChange={ this.handleChangeComplete } /> 
-                                </div>
-                            </div>
-                        </div> 
-                    : ""
-                }
-            </div>
+            <Hue className="color" color={ this.transformColor() } onChange={ this.handleChangeComplete } />
         );
     }
 }

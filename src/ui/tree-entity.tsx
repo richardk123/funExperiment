@@ -18,7 +18,7 @@ export class TreeEntity extends React.Component<TreeData>
         this.props.onSelect(id);
     }
 
-    getName(entity: Entity)
+    getName(entity: Entity): string
     {
         return entity.has(Name) ? entity.get(Name).name : "Entity" + entity.id;
     }
@@ -31,9 +31,7 @@ export class TreeEntity extends React.Component<TreeData>
         });
 
         return (
-            <div>
-                <Tree treeData={data} onSelect={this.select} />
-            </div>
+            <Tree treeData={data} onSelect={this.select} />
         );
     }
     

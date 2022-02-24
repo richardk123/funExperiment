@@ -10,6 +10,8 @@ import { PositionComponent } from "./component/position-component";
 import { ReflectionComponent } from "./component/reflection-component";
 import {NameComponent} from "./component/name-component";
 import {Name} from "../component/name";
+import {MaterialComponent} from "./component/material-component";
+import {MaterialId} from "../component/material-id";
 
 export class FormEntity extends React.Component<FormData>
 {
@@ -32,8 +34,7 @@ export class FormEntity extends React.Component<FormData>
                         </div>
                         <NameComponent name={this.props.entity.get(Name)}/>
                         <PositionComponent position={this.props.entity.get(Position)}/>
-                        <ColorComponent color={this.props.entity.get(Color)}/>
-                        <ReflectionComponent reflection={this.props.entity.get(Reflection)} />
+                        <MaterialComponent materialId={this.props.entity.get(MaterialId)}/>
                         <ModifierComponent modifier={this.props.entity.get(Modifier)} />
                     </div>
                     :

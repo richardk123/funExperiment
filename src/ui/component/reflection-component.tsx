@@ -12,20 +12,7 @@ export class ReflectionComponent extends React.Component<ReflectionProps>
     render(): React.ReactNode 
     {
         return (
-            <div>
-                {
-                    this.props.reflection != undefined ? 
-                        <div className="row mt-1">
-                            <div className="col-md-2"><label className="form-label">Reflection:</label></div>
-                            <div className="col">
-                                <div className="input-group input-group-sm">
-                                    <SliderInput min={0.0} max={1.0} step={0.01} value={this.props.reflection.value} onChange={(value) => this.props.reflection.value = value} />
-                                </div>
-                            </div>
-                        </div> 
-                    : ""
-                }
-            </div>
+            <SliderInput min={0.0} max={1.0} step={0.01} value={this.props.reflection.value} onChange={(value) => this.props.reflection.value = value} />
         );
     }
 }

@@ -40,7 +40,7 @@ export class PositionComponent extends React.Component<PositionProps>
                                 </div>
                             </div>
                         </div> 
-                    : ""
+                    : null
                 }
             </div>
         );
