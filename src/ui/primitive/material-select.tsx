@@ -4,13 +4,13 @@ import {MaterialId} from "../../component/material-id";
 import {QueryHolder} from "../../common/query-holder";
 import {Name} from "../../component/name";
 
-export class MaterialSelect extends React.Component<MaterialData, {materialId: number}>
+export class MaterialSelect extends React.Component<MaterialData, {value: number}>
 {
     constructor(props: MaterialData)
     {
         super(props);
         this.handleChangeEvent = this.handleChangeEvent.bind(this);
-        this.state = {materialId: this.props.materialId};
+        this.state = {value: props.materialId};
     }
 
     render(): React.ReactNode
@@ -18,7 +18,7 @@ export class MaterialSelect extends React.Component<MaterialData, {materialId: n
         return (
             <select className="form-select"
                     onChange={this.handleChangeEvent}
-                    value={this.state.materialId}>
+                    value={this.state.value}>
                 {
                     QueryHolder.materialQuery.entities
                         .map(val =>
@@ -26,7 +26,7 @@ export class MaterialSelect extends React.Component<MaterialData, {materialId: n
                             const name = val.get(Name).name;
                             const id = val.get(MaterialId).id;
 
-                            return <option key={id} data-id={id}>{name}</option>;
+                            return <option key={id} value={id} data-id={id}>{name}</option>;
                         })
                 }
             </select>
@@ -37,7 +37,7 @@ export class MaterialSelect extends React.Component<MaterialData, {materialId: n
     {
         if(prevProps.materialId !== this.props.materialId)
         {
-            this.setState({materialId: this.props.materialId});
+            this.setState({value: this.props.materialId});
         }
     }
 
@@ -46,7 +46,7 @@ export class MaterialSelect extends React.Component<MaterialData, {materialId: n
         const select = e.target;
         const value = select.options[select.selectedIndex];
         const val = parseInt(value.getAttribute('data-id'));
-        this.setState({materialId: val});
+        this.setState({value: val});
         this.props.onChange(val);
     }
 }

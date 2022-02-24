@@ -20,7 +20,7 @@ export class EnumSelect<T> extends React.Component<EnumData<T>, {value: string}>
                             .filter(x => isNaN(parseInt(x)))
                             .map(val => 
                             {
-                                return <option key={val}>{val}</option>;
+                                return <option key={val} value={val}>{val}</option>;
                             })
                     }
             </select>

@@ -28,7 +28,9 @@ export class ColorComponent extends React.Component<ColorProps, {r: number, b: n
     render(): React.ReactNode 
     {
         return (
-            <Hue className="color" color={ this.transformColor() } onChange={ this.handleChangeComplete } />
+            this.props.color !== undefined ?
+                <Hue className="color" color={ this.transformColor() } onChange={ this.handleChangeComplete } />
+            : null
         );
     }
 }

@@ -8,7 +8,7 @@ export class MasterDetail extends React.Component<MasterDetailData, {selected: E
     constructor(props: MasterDetailData)
     {
         super(props);
-        this.state = {selected: this.props.entities[0]};
+        this.state = {selected: undefined};
         this.selectEntity = this.selectEntity.bind(this);
     }
 
