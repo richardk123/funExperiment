@@ -228,7 +228,7 @@ float RayMarch(vec3 ro, vec3 rd) {
 
 vec3 GetNormal(vec3 point) {
 	float dist = GetDistance(point);
-    vec2 e = vec2(.001, 0);
+    vec2 e = vec2(SURF_DIST, 0);
     
     vec3 n = dist - vec3(
         GetDistance(point-e.xyy),
@@ -238,14 +238,13 @@ vec3 GetNormal(vec3 point) {
     return normalize(n);
 }
 
-float GetLight(vec3 point) {
+float GetLight(vec3 point, vec3 normal) {
     vec3 lightPos = vec3(0, 5, -6);
     vec3 l = normalize(lightPos-point);
-    vec3 n = GetNormal(point);
     
-    float dif = clamp(dot(n, l), 0., 1.);
-    float dist = RayMarch(point + n*SURF_DIST * 2., l);
-    if(dist < length(lightPos-point)) dif *= .1;
+    float dif = clamp(dot(normal, l), 0., 1.);
+    float dist = RayMarch(point + normal * SURF_DIST * 2., l);
+    if(dist < length(lightPos - point)) dif *= .1;
     
     return dif;
 }
@@ -280,13 +279,13 @@ void main()
     float dist = RayMarch(camPos, rd);
     vec3 point = camPos + rd * dist;
 
-    float dif = GetLight(point);
+    vec3 normal = GetNormal(point);
+    float dif = GetLight(point, normal);
     
     vec3 col = texture(u_skybox, rd).rgb;
 
     if (dist < MAX_DIST)
     {
-        vec3 normal = GetNormal(point);
         vec3 reflectDir = reflect(rd, normal);
         vec3 reflectSkyboxColor = texture(u_skybox, reflectDir).rgb;
         col = GetColor(point, reflectSkyboxColor) * dif;
