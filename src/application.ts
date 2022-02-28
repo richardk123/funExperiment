@@ -42,15 +42,17 @@ export class Application
         scene
             .addInstance("cube", new Position(3, 0, 2), "blue")
             .setModifier(new Modifier(ModifierType.EXACT))
-            .createAsCubeShape(new V3(1, 1, 1));
+            .createAsCube(new V3(1, 1, 1));
+
         scene
             .addInstance("sphere1", new Position(-1.5, 1, 2), "red")
             .setModifier(new Modifier(ModifierType.EXACT))
-            .createAsSphereShape(1);
+            .createAsSphere(1);
+
         scene
             .addInstance("sphere2", new Position(-3, 1, 2), "green")
             .setModifier(new Modifier(ModifierType.EXACT))
-            .createAsSphereShape(1);
+            .createAsSphere(1);
 
 
         const rendererSystem = new RendererSystem();

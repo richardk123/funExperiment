@@ -66,7 +66,7 @@ export class InstanceBuilder
         return this;
     }
 
-    public createAsCubeShape(dimension: V3): Scene
+    public createAsCube(dimension: V3): Scene
     {
         this._entity.add(new Shape(ShapeType.BOX, 0, dimension));
         this._engine.addEntity(this._entity);
@@ -94,7 +94,7 @@ export class InstanceBuilder
         return this._scene;
     }
 
-    public createAsSphereShape(radius: number): Scene
+    public createAsSphere(radius: number): Scene
     {
         this._entity.add(new Shape(ShapeType.SPHERE, radius));
         this._engine.addEntity(this._entity);

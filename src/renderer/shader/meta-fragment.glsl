@@ -1,7 +1,7 @@
 #version 300 es
-#define MAX_STEPS 100
-#define MAX_DIST 1000.
-#define SURF_DIST .01
+#define MAX_STEPS 150
+#define MAX_DIST 100.
+#define SURF_DIST .0001
 #define RESOLUTION_X 1024
 #define RESOLUTION_Y 768
 #define MAX_OBJECT_COUNT 10
@@ -213,7 +213,7 @@ float RayMarch(vec3 ro, vec3 rd) {
 	float dO = 0.;
     for(int i = 0; i < MAX_STEPS; i++) 
     {
-    	vec3 point = ro + rd*dO;
+    	vec3 point = ro + rd * dO;
         float dist = GetDistance(point);
         dO += dist;
 
