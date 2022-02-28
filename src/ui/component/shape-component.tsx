@@ -62,7 +62,23 @@ export class ShapeComponent extends React.Component<ShapeProps, {shapeType: Shap
                         }
                         {
                             this.state.shapeType == ShapeType.BOX ?
-                                <PositionComponent position={this.props.shape.dimension} title={"Dimension:"}/>
+                                <PositionComponent position={this.props.shape.v1} title={"Dimension:"}/>
+                                : null
+                        }
+                        {
+                            this.state.shapeType == ShapeType.CAPSULE ?
+                                <div>
+                                    <div className="row mt-3">
+                                        <div className="col-md-2"><label className="form-label">Radius:</label></div>
+                                        <div className="col">
+                                            <div className="input-group input-group-sm">
+                                                <NumberInput value={this.props.shape.radius} onChange={this.onRadiusChange}/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <PositionComponent position={this.props.shape.v1} title={"Top:"}/>
+                                    <PositionComponent position={this.props.shape.v2} title={"Bottom:"}/>
+                                </div>
                                 : null
                         }
                     </div>

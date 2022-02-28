@@ -34,7 +34,8 @@ struct Modifier
 struct Shape
 {
     int type;
-    vec3 dimension;
+    vec3 v1;
+    vec3 v2;
     float radius;
 };
 
@@ -74,11 +75,24 @@ float sdCapsule(vec3 point, vec3 a, vec3 b, float r)
     return length( pa - ba*h ) - r;
 }
 
+float sdPlane( vec3 p, vec3 n, float h )
+{
+    // n must be normalized
+    return dot(p,n) + h;
+}
+
+float sdTorus(vec3 p, vec2 t)
+{
+    vec2 q = vec2(length(p.xz) - t.x, p.y);
+    return length(q)-t.y;
+}
+
 Instance GetInstance(int index)
 {
     vec4 texel0 = texelFetch(instancesData, ivec2(0, index), 0);
     vec4 texel1 = texelFetch(instancesData, ivec2(1, index), 0);
     vec4 texel2 = texelFetch(instancesData, ivec2(2, index), 0);
+    vec4 texel3 = texelFetch(instancesData, ivec2(3, index), 0);
     Instance instance;
     instance.position = texel0.rgb;
     instance.materialId = int(texel0.a);
@@ -87,7 +101,8 @@ Instance GetInstance(int index)
 
     instance.shape.type = int(texel1.b);
     instance.shape.radius = texel1.a;
-    instance.shape.dimension = texel2.rgb;
+    instance.shape.v1 = texel2.rgb;
+    instance.shape.v2 = texel3.rgb;
     return instance;
 }
 
@@ -114,11 +129,23 @@ int GetMaterialIndex(vec3 point)
         
         if (instance.shape.type == 0) // box
         {
-            distCur = sdBox(point + instance.position, instance.shape.dimension);
+            distCur = sdBox(point + instance.position, instance.shape.v1);
         }
         else if (instance.shape.type == 1) // sphere
         {
             distCur = sdSphere(point + instance.position, instance.shape.radius);
+        }
+        else if (instance.shape.type == 2) // capsule
+        {
+            distCur = sdCapsule(point + instance.position, instance.shape.v1, instance.shape.v2, instance.shape.radius);
+        }
+        else if (instance.shape.type == 3) // plane
+        {
+            distCur = sdPlane(point + instance.position, instance.shape.v1, instance.shape.radius);
+        }
+        else if (instance.shape.type == 4) // torus
+        {
+            distCur = sdTorus(point + instance.position, instance.shape.v1.xy);
         }
 
         if (distCur < dist)
@@ -143,11 +170,23 @@ float GetDistance(vec3 point)
         
         if (instance.shape.type == 0) // box
         {
-            distCur = sdBox(point + instance.position, instance.shape.dimension);
+            distCur = sdBox(point + instance.position, instance.shape.v1);
         }
         else if (instance.shape.type == 1) // sphere
         {
             distCur = sdSphere(point + instance.position, instance.shape.radius);
+        }
+        else if (instance.shape.type == 2) // capsule
+        {
+            distCur = sdCapsule(point + instance.position, instance.shape.v1, instance.shape.v2, instance.shape.radius);
+        }
+        else if (instance.shape.type == 3) // plane
+        {
+            distCur = sdPlane(point + instance.position, instance.shape.v1, instance.shape.radius);
+        }
+        else if (instance.shape.type == 4) // torus
+        {
+            distCur = sdTorus(point + instance.position, instance.shape.v1.xy);
         }
 
         if (instance.modifier.type == 0)

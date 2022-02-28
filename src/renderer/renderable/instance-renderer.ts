@@ -75,11 +75,11 @@ export class InstanceRenderer
 
         var textureLocation = WebglUtils.getUniformLocation(program, "instancesData", gl);
         
-        const data = new Float32Array(instances.length * 12);
+        const data = new Float32Array(instances.length * 16);
 
         instances.forEach((instance, index) =>
         {
-            const baseIndex = 12 * index;
+            const baseIndex = 16 * index;
 
             const position = instance.get(Position);
             data[baseIndex + 0] = position.x;
@@ -96,10 +96,15 @@ export class InstanceRenderer
             const shape = instance.get(Shape);
             data[baseIndex + 6] = shape.type;
             data[baseIndex + 7] = shape.radius;
-            data[baseIndex + 8] = shape.dimension.x;
-            data[baseIndex + 9] = shape.dimension.y;
-            data[baseIndex + 10] = shape.dimension.z;
+            data[baseIndex + 8] = shape.v1?.x;
+            data[baseIndex + 9] = shape.v1?.y;
+            data[baseIndex + 10] = shape.v1?.z;
             data[baseIndex + 11] = 0;
+
+            data[baseIndex + 12] = shape.v2?.x;
+            data[baseIndex + 13] = shape.v2?.y;
+            data[baseIndex + 14] = shape.v2?.z;
+            data[baseIndex + 15] = 0;
         });
 
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 8);

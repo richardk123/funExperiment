@@ -73,9 +73,30 @@ export class InstanceBuilder
         return this._scene;
     }
 
+    public createAsCapsule(v1: V3, v2: V3, radius: number): Scene
+    {
+        this._entity.add(new Shape(ShapeType.CAPSULE, radius, v1, v2));
+        this._engine.addEntity(this._entity);
+        return this._scene;
+    }
+
+    public createAsPlane(direction: V3, h: number): Scene
+    {
+        this._entity.add(new Shape(ShapeType.PLANE, h, direction));
+        this._engine.addEntity(this._entity);
+        return this._scene;
+    }
+
+    public createAsTorus(inner: number, outer: number): Scene
+    {
+        this._entity.add(new Shape(ShapeType.TORUS, 0, new V3(inner, outer, 0)));
+        this._engine.addEntity(this._entity);
+        return this._scene;
+    }
+
     public createAsSphereShape(radius: number): Scene
     {
-        this._entity.add(new Shape(ShapeType.SPHERE, radius, new V3(0, 0, 0)));
+        this._entity.add(new Shape(ShapeType.SPHERE, radius));
         this._engine.addEntity(this._entity);
         return this._scene;
     }
