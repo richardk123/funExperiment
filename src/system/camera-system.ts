@@ -33,7 +33,7 @@ export class CameraSystem extends System
     {
         this.time += dt;
         const camera = QueryHolder.cameraQuery.first;
-        camera.get(Position).y = 3 * Math.sin(this.time / 30);
+        camera.get(Position).y = 3 + 3 * Math.sin(this.time / 30);
         camera.get(Position).x = 7 * Math.sin(this.time / 50);
     }
 }

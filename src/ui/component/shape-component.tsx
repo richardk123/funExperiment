@@ -9,7 +9,7 @@ export class ShapeComponent extends React.Component<ShapeProps, {shapeType: Shap
     constructor(props: ShapeProps)
     {
         super(props);
-        this.state = {shapeType: props.shape.type};
+        this.state = {shapeType: props.shape?.type};
         this.onChangeType = this.onChangeType.bind(this);
         this.onRadiusChange = this.onRadiusChange.bind(this);
     }
@@ -29,7 +29,7 @@ export class ShapeComponent extends React.Component<ShapeProps, {shapeType: Shap
     {
         if(prevProps.shape !== this.props.shape)
         {
-            this.setState({shapeType: this.props.shape.type});
+            this.setState({shapeType: this.props.shape?.type});
         }
     }
 
@@ -78,6 +78,43 @@ export class ShapeComponent extends React.Component<ShapeProps, {shapeType: Shap
                                     </div>
                                     <PositionComponent position={this.props.shape.v1} title={"Top:"}/>
                                     <PositionComponent position={this.props.shape.v2} title={"Bottom:"}/>
+                                </div>
+                                : null
+                        }
+                        {
+                            this.state.shapeType == ShapeType.PLANE ?
+                                <div>
+                                    <div className="row mt-3">
+                                        <div className="col-md-2"><label className="form-label">H:</label></div>
+                                        <div className="col">
+                                            <div className="input-group input-group-sm">
+                                                <NumberInput value={this.props.shape.radius} onChange={this.onRadiusChange}/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <PositionComponent position={this.props.shape.v1} title={"Direction:"}/>
+                                </div>
+                                : null
+                        }
+                        {
+                            this.state.shapeType == ShapeType.TORUS ?
+                                <div>
+                                    <div className="row mt-3">
+                                        <div className="col-md-2"><label className="form-label">Inner:</label></div>
+                                        <div className="col">
+                                            <div className="input-group input-group-sm">
+                                                <NumberInput value={this.props.shape.v1.y} onChange={(val) => this.props.shape.v1.y = val}/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="row mt-3">
+                                        <div className="col-md-2"><label className="form-label">Outer:</label></div>
+                                        <div className="col">
+                                            <div className="input-group input-group-sm">
+                                                <NumberInput value={this.props.shape.v1.x} onChange={(val) => this.props.shape.v1.x = val}/>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 : null
                         }

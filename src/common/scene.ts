@@ -89,7 +89,7 @@ export class InstanceBuilder
 
     public createAsTorus(inner: number, outer: number): Scene
     {
-        this._entity.add(new Shape(ShapeType.TORUS, 0, new V3(inner, outer, 0)));
+        this._entity.add(new Shape(ShapeType.TORUS, 0, new V3(outer, inner, 0)));
         this._engine.addEntity(this._entity);
         return this._scene;
     }

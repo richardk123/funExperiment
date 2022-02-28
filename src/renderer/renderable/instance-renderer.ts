@@ -96,20 +96,20 @@ export class InstanceRenderer
             const shape = instance.get(Shape);
             data[baseIndex + 6] = shape.type;
             data[baseIndex + 7] = shape.radius;
-            data[baseIndex + 8] = shape.v1?.x;
-            data[baseIndex + 9] = shape.v1?.y;
-            data[baseIndex + 10] = shape.v1?.z;
+            data[baseIndex + 8] = shape.v1.x;
+            data[baseIndex + 9] = shape.v1.y;
+            data[baseIndex + 10] = shape.v1.z;
             data[baseIndex + 11] = 0;
 
-            data[baseIndex + 12] = shape.v2?.x;
-            data[baseIndex + 13] = shape.v2?.y;
-            data[baseIndex + 14] = shape.v2?.z;
+            data[baseIndex + 12] = shape.v2.x;
+            data[baseIndex + 13] = shape.v2.y;
+            data[baseIndex + 14] = shape.v2.z;
             data[baseIndex + 15] = 0;
         });
 
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 8);
         gl.activeTexture(gl.TEXTURE0 + textureIndex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, 3, instances.length, 0, gl.RGBA, gl.FLOAT, data);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, 4, instances.length, 0, gl.RGBA, gl.FLOAT, data);
         gl.uniform1i(textureLocation, textureIndex);
         gl.bindTexture(gl.TEXTURE_2D, texture);
     }

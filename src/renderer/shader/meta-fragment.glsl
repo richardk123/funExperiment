@@ -93,6 +93,7 @@ Instance GetInstance(int index)
     vec4 texel1 = texelFetch(instancesData, ivec2(1, index), 0);
     vec4 texel2 = texelFetch(instancesData, ivec2(2, index), 0);
     vec4 texel3 = texelFetch(instancesData, ivec2(3, index), 0);
+    
     Instance instance;
     instance.position = texel0.rgb;
     instance.materialId = int(texel0.a);

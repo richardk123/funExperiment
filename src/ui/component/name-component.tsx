@@ -19,6 +19,14 @@ export class NameComponent extends React.Component<ReflectionProps, {value: stri
         this.setState({value: value});
     }
 
+    componentDidUpdate(prevProps)
+    {
+        if(prevProps.name.name !== this.props.name.name)
+        {
+          this.setState({value: this.props.name.name});
+        }
+    }
+
     render(): React.ReactNode
     {
         return (

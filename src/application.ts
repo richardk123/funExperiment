@@ -19,9 +19,26 @@ export class Application
 
         const scene = new Scene(engine);
 
+        scene.addMaterial("yellow", new Color(1, 1, 0, 1), 0.7);
         scene.addMaterial("blue", new Color(0, 0, 1, 1), 0);
         scene.addMaterial("red", new Color(1, 0, 0, 1), 0);
         scene.addMaterial("green", new Color(0, 1, 0, 1), 0.7);
+
+        scene
+            .addInstance("plane", new Position(0, 1, 0), "yellow")
+            .setModifier(new Modifier(ModifierType.EXACT))
+            .createAsPlane(new V3(0, 1, 0), 0);
+
+        scene
+            .addInstance("capsule", new Position(0, 1, 0), "blue")
+            .setModifier(new Modifier(ModifierType.EXACT))
+            .createAsCapsule(new V3(0, 1, 0), new V3(0, 2, 0), 0.5);
+
+        scene
+            .addInstance("torus", new Position(-1.5, -1, 2), "yellow")
+            .setModifier(new Modifier(ModifierType.EXACT))
+            .createAsTorus(0.2, 0.7);
+
         scene
             .addInstance("cube", new Position(3, 0, 2), "blue")
             .setModifier(new Modifier(ModifierType.EXACT))
@@ -32,7 +49,7 @@ export class Application
             .createAsSphereShape(1);
         scene
             .addInstance("sphere2", new Position(-3, 1, 2), "green")
-            .setModifier(new Modifier(ModifierType.SMOOTH, 1))
+            .setModifier(new Modifier(ModifierType.EXACT))
             .createAsSphereShape(1);
 
 
