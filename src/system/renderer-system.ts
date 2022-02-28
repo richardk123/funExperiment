@@ -24,6 +24,6 @@ export class RendererSystem extends System
         const instances = QueryHolder.instanceQuery.entities;
         const materials = QueryHolder.materialQuery.entities;
 
-        // this.renderer.render(sun, camera, instances, materials);
+        this.renderer.render(sun, camera, instances, materials);
     }
 }

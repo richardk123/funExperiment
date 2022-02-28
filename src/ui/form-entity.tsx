@@ -9,6 +9,8 @@ import {NameComponent} from "./component/name-component";
 import {Name} from "../component/name";
 import {MaterialComponent} from "./component/material-component";
 import {MaterialId} from "../component/material-id";
+import {ShapeComponent} from "./component/shape-component";
+import {Shape} from "../component/shape";
 
 export class FormEntity extends React.Component<FormData>
 {
@@ -23,14 +25,15 @@ export class FormEntity extends React.Component<FormData>
         return (
             this.props.entity ?
                 <div className="container">
-                    <div className="row">
+                    <div className="row mt-2">
                         <div className="col-md-2"><label className="form-label">Id:</label></div>
                         <div className="col">{this.props.entity.id}</div>
                     </div>
                     <NameComponent name={this.props.entity.get(Name)}/>
-                    <PositionComponent position={this.props.entity.get(Position)}/>
-                    <MaterialComponent materialId={this.props.entity.get(MaterialId)}/>
+                    <PositionComponent position={this.props.entity.get(Position)} title={"Position:"}/>
                     <ModifierComponent modifier={this.props.entity.get(Modifier)} />
+                    <MaterialComponent materialId={this.props.entity.get(MaterialId)}/>
+                    <ShapeComponent shape={this.props.entity.get(Shape)}/>
                 </div>
                 :
                 null

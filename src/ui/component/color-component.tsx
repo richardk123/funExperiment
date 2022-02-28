@@ -8,11 +8,11 @@ export class ColorComponent extends React.Component<ColorProps, {r: number, b: n
     constructor(props: ColorProps)
     {
         super(props);
-        this.handleChangeComplete = this.handleChangeComplete.bind(this);
+        this.onColorChange = this.onColorChange.bind(this);
         this.state = this.transformColor();
     }
 
-    handleChangeComplete(color: ColorResult, event: React.ChangeEvent<HTMLInputElement>): void
+    onColorChange(color: ColorResult, event: React.ChangeEvent<HTMLInputElement>): void
     {
         this.props.color.r = color.rgb.r / 255;
         this.props.color.g = color.rgb.g / 255;
@@ -29,7 +29,7 @@ export class ColorComponent extends React.Component<ColorProps, {r: number, b: n
     {
         return (
             this.props.color !== undefined ?
-                <Hue className="color" color={ this.transformColor() } onChange={ this.handleChangeComplete } />
+                <Hue className="color" color={ this.transformColor() } onChange={ this.onColorChange } />
             : null
         );
     }

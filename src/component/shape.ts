@@ -4,15 +4,11 @@ export class Shape
 {
     private readonly _type: ShapeType;
 
-    constructor(type: ShapeType, public radius: number, public dimension: V3)
+    constructor(public type: ShapeType, public radius: number, public dimension: V3)
     {
         this._type = type;
     }
 
-    public get type(): ShapeType
-    {
-        return this._type;
-    }
 }
 
 

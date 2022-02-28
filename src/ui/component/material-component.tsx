@@ -9,6 +9,7 @@ import {Color} from "../../component/color";
 import {MaterialSelect} from "../primitive/material-select";
 import {ReflectionComponent} from "./reflection-component";
 import {Entity} from "tick-knock";
+import {NameComponent} from "./name-component";
 
 export class MaterialComponent extends React.Component<MaterialProps, MaterialComponentState>
 {
@@ -16,17 +17,27 @@ export class MaterialComponent extends React.Component<MaterialProps, MaterialCo
     {
         super(props);
         this.state = new MaterialComponentState(this.props.materialId?.id);
-        this.materialChange = this.materialChange.bind(this);
+        this.onMaterialChange = this.onMaterialChange.bind(this);
+        this.onChangeName = this.onChangeName.bind(this);
     }
 
-    materialChange(materialId: number)
+    onMaterialChange(materialId: number)
     {
         this.setState(new MaterialComponentState(materialId));
         this.props.materialId.id = materialId;
     }
 
     static getDerivedStateFromProps(props, state) {
-        return new MaterialComponentState(props.materialId?.id);
+        const result = new MaterialComponentState(props.materialId?.id);
+        result.changeName = state.changeName;
+        return result;
+    }
+
+    onChangeName()
+    {
+        const result = new MaterialComponentState(this.state.materialId);
+        result.changeName = !this.state.changeName;
+        this.setState(result);
     }
 
     render(): React.ReactNode
@@ -34,17 +45,22 @@ export class MaterialComponent extends React.Component<MaterialProps, MaterialCo
         return (
             this.props.materialId != undefined ?
                 <div>
-                    <div className="row mt-1">
+                    <div className="row mt-3">
                         <div className="col-md-2"><label className="form-label">Material:</label></div>
                         <div className="col">
-                            <div className="row mt-1">
-                                <div className="col-md-2"><label className="form-label">Name:</label></div>
-                                <div className="col">
-                                    <div className="input-group input-group-sm">
-                                        <MaterialSelect materialId={this.state.materialId} onChange={this.materialChange}/>
+                            {this.state.changeName ?
+                                <NameComponent name={this.state.name} onEnter={this.onChangeName}/>
+                                :
+                                <div className="row mt-1">
+                                    <div className="col-md-2"><label className="form-label">Name:</label></div>
+                                    <div className="col">
+                                        <div className="input-group input-group-sm">
+                                            <MaterialSelect materialId={this.state.materialId} onChange={this.onMaterialChange}/>
+                                            <button type="button" className="btn btn-primary" onClick={this.onChangeName}>Edit</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            }
                             <div className="row mt-1">
                                 <div className="col-md-2"><label className="form-label">Color:</label></div>
                                 <div className="col">
@@ -75,19 +91,23 @@ class MaterialComponentState
     entity: Entity;
     reflection: Reflection;
     color: Color;
+    name: Name;
+    changeName: boolean;
 
     constructor(materialId: number)
     {
+        this.changeName = false;
         this.materialId = materialId;
         this.entity = QueryHolder.materialQuery.entities
             .filter(entity => entity.get(MaterialId).id == materialId)[0];
-
         if (this.entity)
         {
             this.reflection = this.entity.get(Reflection);
             this.color = this.entity.get(Color);
+            this.name = this.entity.get(Name);
         }
     }
+
 }
 
 interface MaterialProps

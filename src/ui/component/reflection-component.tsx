@@ -7,10 +7,10 @@ export class ReflectionComponent extends React.Component<ReflectionProps>
     constructor(props: ReflectionProps)
     {
         super(props);
-        this.reflectionChange = this.reflectionChange.bind(this);
+        this.onReflectionChange = this.onReflectionChange.bind(this);
     }
 
-    reflectionChange(value: number)
+    onReflectionChange(value: number)
     {
         this.props.reflection.value = value;
     }
@@ -19,7 +19,7 @@ export class ReflectionComponent extends React.Component<ReflectionProps>
     {
         return (
             this.props.reflection !== undefined ?
-                <SliderInput min={0.0} max={1.0} step={0.01} value={this.props.reflection.value} onChange={this.reflectionChange} />
+                <SliderInput min={0.0} max={1.0} step={0.01} value={this.props.reflection.value} onChange={this.onReflectionChange} />
             : null
         );
     }

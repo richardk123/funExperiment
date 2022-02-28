@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Position } from "../../component/position";
 import { NumberInput } from "../primitive/number-input";
+import {V3} from "../../component/base/v3";
 
 export class PositionComponent extends React.Component<PositionProps>
 {
@@ -13,8 +14,8 @@ export class PositionComponent extends React.Component<PositionProps>
     {
         return (
             this.props.position != undefined ?
-                <div className="row mt-1">
-                    <div className="col-md-2"><label className="form-label">Position:</label></div>
+                <div className="row mt-3">
+                    <div className="col-md-2"><label className="form-label">{this.props.title}</label></div>
                     <div className="col">
                         <div className="row">
                             <div className="col-sm-3 position-x">
@@ -45,5 +46,6 @@ export class PositionComponent extends React.Component<PositionProps>
 
 interface PositionProps
 {
-    position?: Position;
+    position?: V3;
+    title: string;
 }

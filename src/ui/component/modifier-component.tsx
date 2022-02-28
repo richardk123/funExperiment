@@ -9,10 +9,10 @@ export class ModifierComponent extends React.Component<ModifierProps, {type: Mod
     {
         super(props);
         this.state = {type: props.modifier?.type};
-        this.changeType = this.changeType.bind(this);
+        this.onChangeType = this.onChangeType.bind(this);
     }
 
-    changeType(type: ModifierType)
+    onChangeType(type: ModifierType)
     {
         this.props.modifier.type = type;
         this.setState({type: type});
@@ -30,13 +30,13 @@ export class ModifierComponent extends React.Component<ModifierProps, {type: Mod
     {
         return (
             this.props.modifier != undefined ?
-                <div className="row mt-1">
+                <div className="row mt-3">
                     <div className="row">
                         <div className="col-md-2"><label className="form-label">Modifier:</label></div>
                         <div className="col">
                             <div className="input-group input-group-sm">
                                 <div className="input-group-text">Type:</div>
-                                <EnumSelect type={ModifierType} value={this.props.modifier.type} onChange={this.changeType}/>
+                                <EnumSelect type={ModifierType} value={this.props.modifier.type} onChange={this.onChangeType}/>
                             </div>
                         </div>
                     </div>
