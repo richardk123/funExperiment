@@ -14,10 +14,8 @@ export class Application
 {
     constructor()
     {
-        const engine = new Engine();
-        QueryHolder.addQueries(engine);
 
-        const scene = new Scene(engine);
+        const scene = Scene.get();
 
         scene.addMaterial("yellow", new Color(1, 1, 0, 1), 0.7);
         scene.addMaterial("blue", new Color(0, 0, 1, 1), 0);
@@ -59,11 +57,11 @@ export class Application
         const perspectiveCameraSystem = new CameraSystem();
         const debugSystem = new DebugSystem();
 
-        engine.addSystem(perspectiveCameraSystem);
-        engine.addSystem(debugSystem);
-        engine.addSystem(rendererSystem);
+        scene.engine.addSystem(perspectiveCameraSystem);
+        scene.engine.addSystem(debugSystem);
+        scene.engine.addSystem(rendererSystem);
 
-        this.mainLoop(engine, 0);
+        this.mainLoop(scene.engine, 0);
     }
 
     private mainLoop(engine: Engine, deltaTime: number)

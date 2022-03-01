@@ -11,6 +11,10 @@ import {MaterialComponent} from "./component/material-component";
 import {MaterialId} from "../component/material-id";
 import {ShapeComponent} from "./component/shape-component";
 import {Shape} from "../component/shape";
+import {Scene} from "../common/scene";
+import {V3} from "../component/base/v3";
+import {QueryHolder} from "../common/query-holder";
+import {Color} from "../component/color";
 
 export class FormEntity extends React.Component<FormData>
 {
@@ -19,7 +23,7 @@ export class FormEntity extends React.Component<FormData>
         super(props);
     }
 
-    render(): React.ReactNode 
+    render(): React.ReactNode
     {
 
         return (

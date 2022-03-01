@@ -6,11 +6,11 @@ import { ValueComponent } from "./primitive/value-text";
 
 export class DebugRenderer
 {
-    public renderEntities(entities: ReadonlyArray<Entity>): void
+    public renderEntities(): void
     {
         ReactDOM.render(
             <div>
-                <MasterDetail entities={entities} />
+                <MasterDetail/>
             </div>,
             document.getElementById("masterDetail")
         );
