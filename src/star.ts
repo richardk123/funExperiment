@@ -13,7 +13,7 @@ export class Star
         this.position = position;
         this.speed = speed;
         this.mass = mass;
-        this.explosionFrameThreshold = Utils.randomFromInterval(5, 15);
+        this.explosionFrameThreshold = Utils.randomFromInterval(9, 13);
     }
 
     public get radius()
@@ -44,7 +44,7 @@ export class StarFactory
     public createStarOnEdge(): Star
     {
 
-        const mass = Utils.randomFromInterval(0.1, 1);
+        const mass = Utils.randomFromInterval(0.3, 1);
         const star = new Star(new Vector(0, 0), new Vector(0, 0), mass);
         this.moveToEdgeAndSetSpeed(star);
         return star;
@@ -70,7 +70,7 @@ export class StarFactory
 
         const randomPosition = new Vector(this.canvasWidth * Math.random(), this.canvasHeight * Math.random());
 
-        const speedMagnitude = Utils.randomFromInterval(0.1, 0.5);
+        const speedMagnitude = Utils.randomFromInterval(0.2, 0.5);
         const speed = randomPosition.subtract(position).unit().mulS(speedMagnitude);
 
         star.position = position;

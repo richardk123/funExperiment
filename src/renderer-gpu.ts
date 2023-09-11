@@ -7,6 +7,7 @@ import fragmentShaderFile from '!!raw-loader!./shader/fragment.glsl';
 export class RendererGpu implements Renderer
 {
 
+    canvas: HTMLCanvasElement;
     metaballsData: WebGLUniformLocation;
     metaballsCount: WebGLUniformLocation;
     webgl: WebGLRenderingContext;
@@ -15,8 +16,9 @@ export class RendererGpu implements Renderer
 
     constructor()
     {
-        var canvas = <HTMLCanvasElement> document.getElementById("canvas");
-        var webgl = canvas.getContext('webgl');
+        this.canvas = <HTMLCanvasElement> document.getElementById("canvas");
+        this.resizeCanvasToDisplaySize(this.canvas);
+        var webgl = this.canvas.getContext('webgl');
 
         var vertexShader = this.compileShader(webgl.VERTEX_SHADER , vertexShaderFile, webgl);
         var fragmentShader = this.compileShader(webgl.FRAGMENT_SHADER ,fragmentShaderFile, webgl);
@@ -54,8 +56,20 @@ export class RendererGpu implements Renderer
         this.webgl = webgl;
 
 
-        this.width = canvas.width;
-        this.height = canvas.height;
+        this.width = this.canvas.clientWidth;
+        this.height = this.canvas.clientHeight;
+    }
+
+    resizeCanvasToDisplaySize(canvas: HTMLCanvasElement) {
+        // Lookup the size the browser is displaying the canvas in CSS pixels.
+        const displayWidth  = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+
+
+        console.log(displayWidth);
+        console.log(displayHeight);
+        canvas.style.width  = ((769 / 1024) * displayWidth).toString();
+        canvas.style.height = displayHeight.toString();
     }
 
     // Utility to complain loudly if we fail to find the uniform
